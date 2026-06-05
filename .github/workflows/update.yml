@@ -2,9 +2,9 @@ name: Update World Cup 2026 calendar
 
 on:
   schedule:
-    # 22:00 UTC = 05:00 giờ Việt Nam, mỗi sáng.
-    # (GitHub cron chạy theo UTC và có thể trễ vài phút — bình thường.)
-    - cron: "0 22 * * *"
+    # Mỗi giờ, đầu giờ (theo UTC). GitHub cron có thể trễ vài phút và đôi khi
+    # bỏ nhịp khi hệ thống bận — bình thường. Script chỉ commit khi dữ liệu đổi.
+    - cron: "0 * * * *"
   workflow_dispatch: {}   # cho phép bấm chạy tay trong tab Actions
   push:
     branches: [main]       # chạy lại mỗi khi sửa code
