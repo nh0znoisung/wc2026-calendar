@@ -1,0 +1,63 @@
+name: Update World Cup 2026 calendar
+
+on:
+  schedule:
+    # 22:00 UTC = 05:00 giờ Việt Nam, mỗi sáng.
+    # (GitHub cron chạy theo UTC và có thể trễ vài phút — bình thường.)
+    - cron: "0 22 * * *"
+  workflow_dispatch: {}   # cho phép bấm chạy tay trong tab Actions
+  push:
+    branches: [main]       # chạy lại mỗi khi sửa code
+
+permissions:
+  contents: write
+
+concurrency:
+  group: update-ics
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install deps
+        run: pip install icalendar
+
+      - name: Fetch fixtures data (openfootball)
+        run: git clone --depth 1 https://github.com/openfootball/worldcup.git _data
+
+      - name: Generate worldcup.ics
+        run: |
+          DATA=$(echo _data/2026--*)
+          echo "Using data dir: $DATA"
+          python generate_ics.py --data-dir "$DATA" --out worldcup.ics
+
+      - name: Validate
+        run: |
+          python - <<'PY'
+          from icalendar import Calendar
+          evs=[c for c in Calendar.from_ical(open('worldcup.ics','rb').read()).walk() if c.name=='VEVENT']
+          assert len(evs)==104, f"expected 104 events, got {len(evs)}"
+          assert len({str(e['UID']) for e in evs})==104, "duplicate UIDs"
+          print("OK:", len(evs), "events")
+          PY
+
+      - name: Commit if changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add worldcup.ics
+          if git diff --staged --quiet; then
+            echo "No changes — nothing to commit."
+          else
+            git commit -m "Update worldcup.ics ($(date -u +'%Y-%m-%d %H:%MZ'))"
+            git push
+          fi
