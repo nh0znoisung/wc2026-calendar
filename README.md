@@ -45,11 +45,38 @@ Không cần token hay đăng nhập gì thêm.
 
 ---
 
+## Tỷ số & màu sắc
+
+**Tỷ số:** sau khi trận đấu kết thúc và nguồn dữ liệu cập nhật, title tự đổi:
+`🟢 Mexico vs South Africa — Group A` → `🟢 Mexico 2-1 South Africa — Group A`
+(có cả `(aet)` / `(pen 4-2)` nếu đá hiệp phụ/luân lưu; chi tiết trong description).
+Không có tỷ số *live* — Google chỉ kéo lịch vài tiếng một lần.
+
+**Màu theo vòng — 2 lựa chọn:**
+
+1. *Đơn giản:* subscribe 1 file `worldcup.ics` — các vòng phân biệt bằng chấm màu
+   trên title: 🟢 vòng bảng · 🔵 vòng 32 · 🟣 vòng 16 · 🟠 tứ kết · 🔴 bán kết · 🥉 hạng 3 · 🏆 CK.
+2. *Màu thật:* subscribe từng file theo vòng (mỗi cái là 1 calendar riêng, tự gán màu
+   trong Google: bấm ⋮ cạnh tên calendar → chọn màu):
+
+```
+https://raw.githubusercontent.com/nh0znoisung/wc2026-calendar/main/worldcup-group.ics
+https://raw.githubusercontent.com/nh0znoisung/wc2026-calendar/main/worldcup-r32.ics
+https://raw.githubusercontent.com/nh0znoisung/wc2026-calendar/main/worldcup-r16.ics
+https://raw.githubusercontent.com/nh0znoisung/wc2026-calendar/main/worldcup-qf.ics
+https://raw.githubusercontent.com/nh0znoisung/wc2026-calendar/main/worldcup-sf.ics
+https://raw.githubusercontent.com/nh0znoisung/wc2026-calendar/main/worldcup-final.ics
+```
+
+> Chọn 1 trong 2 — subscribe cả `worldcup.ics` lẫn các file vòng sẽ bị trùng event.
+
+---
+
 ## Cách nó tự cập nhật
 
-- **GitHub Actions** (file `.github/workflows/update.yml`) chạy theo cron `0 22 * * *`
-  (22:00 UTC = 05:00 VN) — clone dữ liệu mới, sinh lại `worldcup.ics`, commit nếu có thay đổi.
-  Chạy trên cloud GitHub nên **máy bạn tắt vẫn chạy**.
+- **GitHub Actions** (file `.github/workflows/update.yml`) chạy **mỗi giờ** — clone dữ
+  liệu mới, sinh lại các file .ics, commit nếu có thay đổi. Chạy trên cloud GitHub nên
+  **máy bạn tắt vẫn chạy**.
 - **Google Calendar** tự đọc lại link subscribe định kỳ (~mỗi 8–24h, do Google quyết định,
   không chỉnh tần suất được). Vì mỗi trận có UID cố định nên cập nhật **đè tại chỗ**, không trùng.
 
@@ -61,12 +88,13 @@ Muốn đổi giờ chạy: sửa dòng `cron` trong `update.yml` (theo giờ UT
 ```bash
 pip install icalendar
 git clone --depth 1 https://github.com/openfootball/worldcup.git _data
-python generate_ics.py --data-dir "$(echo _data/2026--*)" --out worldcup.ics
+python generate_ics.py --data-dir "$(echo _data/2026--*)" --out-dir .
 ```
 
 ## Files
 | File | Vai trò |
 |---|---|
-| `generate_ics.py` | Parse dữ liệu → sinh `worldcup.ics` |
-| `worldcup.ics` | File lịch (cái Google subscribe) |
-| `.github/workflows/update.yml` | Cron tự cập nhật mỗi sáng |
+| `generate_ics.py` | Parse dữ liệu → sinh các file .ics |
+| `worldcup.ics` | Lịch đầy đủ 104 trận (subscribe 1 file) |
+| `worldcup-group/r32/r16/qf/sf/final.ics` | Lịch tách theo vòng (để gán màu riêng) |
+| `.github/workflows/update.yml` | Cron tự cập nhật mỗi giờ |

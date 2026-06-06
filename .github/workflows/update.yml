@@ -34,27 +34,32 @@ jobs:
       - name: Fetch fixtures data (openfootball)
         run: git clone --depth 1 https://github.com/openfootball/worldcup.git _data
 
-      - name: Generate worldcup.ics
+      - name: Generate calendars
         run: |
           DATA=$(echo _data/2026--*)
           echo "Using data dir: $DATA"
-          python generate_ics.py --data-dir "$DATA" --out worldcup.ics
+          python generate_ics.py --data-dir "$DATA" --out-dir .
 
       - name: Validate
         run: |
           python - <<'PY'
           from icalendar import Calendar
-          evs=[c for c in Calendar.from_ical(open('worldcup.ics','rb').read()).walk() if c.name=='VEVENT']
-          assert len(evs)==104, f"expected 104 events, got {len(evs)}"
-          assert len({str(e['UID']) for e in evs})==104, "duplicate UIDs"
-          print("OK:", len(evs), "events")
+          from pathlib import Path
+          def events(p):
+              return [c for c in Calendar.from_ical(Path(p).read_bytes()).walk() if c.name=='VEVENT']
+          combined = events('worldcup.ics')
+          assert len(combined)==104, f"expected 104 events, got {len(combined)}"
+          assert len({str(e['UID']) for e in combined})==104, "duplicate UIDs"
+          total = sum(len(events(p)) for p in Path('.').glob('worldcup-*.ics'))
+          assert total==104, f"per-stage files sum to {total}, expected 104"
+          print("OK: 104 events combined + per-stage split checks out")
           PY
 
       - name: Commit if changed
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add worldcup.ics
+          git add *.ics
           if git diff --staged --quiet; then
             echo "No changes — nothing to commit."
           else

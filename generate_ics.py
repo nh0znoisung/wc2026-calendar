@@ -1,21 +1,25 @@
 #!/usr/bin/env python3
 """
-Generate worldcup.ics for the 2026 FIFA World Cup from the openfootball dataset.
+Generate .ics calendars for the 2026 FIFA World Cup from the openfootball dataset.
 
 Data source (cloned at runtime by the GitHub Action):
     https://github.com/openfootball/worldcup  ->  2026--*/{cup.txt,cup_finals.txt,cup_stadiums.csv}
 
-Kickoff times in the source carry an explicit UTC offset (e.g. "13:00 UTC-6"),
-so conversion to UTC is exact (handles US/Canada DST and Mexico's no-DST).
-Google Calendar then renders each event in the viewer's own timezone.
-
-Stable UIDs:
-  - group games : keyed on the (fixed) team pairing  -> never duplicate
-  - knockout    : keyed on the official match number  -> placeholders ("2A","W74")
-                  get rewritten in place once the real team is known.
+Features
+  - Kickoff times carry an explicit UTC offset in the source ("13:00 UTC-6"),
+    so UTC conversion is exact (US/Canada DST vs Mexico no-DST handled).
+  - Played matches: openfootball replaces " v " with a score
+    ("Mexico 2-1 South Africa", "1-1 a.e.t. (1-1, 0-0)", "1-1 pen. 4-2", ...).
+    Scores are parsed and shown in the event TITLE + detail in DESCRIPTION.
+  - Round markers: colored emoji dot per stage in the title
+    (group 🟢, R32 🔵, R16 🟣, QF 🟠, SF 🔴, 3rd 🥉, Final 🏆).
+  - Output: one combined worldcup.ics + per-stage files (worldcup-group.ics,
+    worldcup-r32.ics, ...) so each stage can be subscribed separately and
+    given its own color in Google Calendar.
+  - Stable UIDs -> updates rewrite events in place, never duplicate.
 
 Usage:
-    python generate_ics.py --data-dir _data/2026--usa --out worldcup.ics
+    python generate_ics.py --data-dir _data/2026--usa --out-dir .
 """
 import argparse
 import re
@@ -28,20 +32,24 @@ MONTHS = {
     "jan": 1, "feb": 2, "mar": 3, "apr": 4, "may": 5, "jun": 6,
     "jul": 7, "aug": 8, "sep": 9, "oct": 10, "nov": 11, "dec": 12,
 }
-WEEKDAYS = {"Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"}
 YEAR = 2026
 
 # Constant DTSTAMP so the file only changes when match DATA changes
-# (keeps the daily git diff clean -> no noisy empty commits).
+# (keeps the git diff clean -> no noisy commits from the hourly cron).
 DTSTAMP = "20251205T120000Z"
 UID_DOMAIN = "wc2026.nh0znoisung.github"
 
 DATE_RE = re.compile(r"^(Mon|Tue|Wed|Thu|Fri|Sat|Sun)\s+([A-Za-z]+)\s+(\d{1,2})\s*$")
+
+# Separator between the two team names: either "v" (not played yet) or a
+# score blob, e.g. "2-1", "2-1 (1-0)", "1-1 a.e.t. (1-1, 0-0)", "1-1 pen. 4-2".
+SCORE_BLOB = r"\d{1,2}-\d{1,2}(?:\s*(?:\([^)]*\)|a\.e\.t\.?|pen\.?\s*\d{1,2}-\d{1,2}))*"
+SEP = rf"(v|{SCORE_BLOB})"
 GROUP_MATCH_RE = re.compile(
-    r"^\s*(\d{1,2}):(\d{2})\s+UTC([+-]\d{1,2})\s+(.+?)\s+v\s+(.+?)\s+@\s+(.+?)\s*$"
+    rf"^\s*(\d{{1,2}}):(\d{{2}})\s+UTC([+-]\d{{1,2}})\s+(.+?)\s+{SEP}\s+(.+?)\s+@\s+(.+?)\s*$"
 )
 KO_MATCH_RE = re.compile(
-    r"^\s*\((\d+)\)\s+(\d{1,2}):(\d{2})\s+UTC([+-]\d{1,2})\s+(.+?)\s+v\s+(.+?)\s+@\s+(.+?)\s*$"
+    rf"^\s*\((\d+)\)\s+(\d{{1,2}}):(\d{{2}})\s+UTC([+-]\d{{1,2}})\s+(.+?)\s+{SEP}\s+(.+?)\s+@\s+(.+?)\s*$"
 )
 
 ROUND_SHORT = {
@@ -51,6 +59,23 @@ ROUND_SHORT = {
     "Semi-final": "SF",
     "Match for third place": "3rd place",
     "Final": "Final",
+}
+# stage key: (emoji dot, calendar display name, RFC7986 calendar color)
+STAGES = {
+    "group": ("🟢", "WC26 · Vòng bảng", "green"),
+    "r32":   ("🔵", "WC26 · Vòng 32",   "blue"),
+    "r16":   ("🟣", "WC26 · Vòng 16",   "purple"),
+    "qf":    ("🟠", "WC26 · Tứ kết",    "orange"),
+    "sf":    ("🔴", "WC26 · Bán kết",   "red"),
+    "final": ("🏆", "WC26 · Chung kết", "gold"),
+}
+ROUND_TO_STAGE = {
+    "Round of 32": "r32",
+    "Round of 16": "r16",
+    "Quarter-final": "qf",
+    "Semi-final": "sf",
+    "Match for third place": "final",
+    "Final": "final",
 }
 
 
@@ -70,13 +95,27 @@ def parse_date(line):
 
 
 def to_utc(day, hh, mm, offset_hours):
-    """local naive time at the given UTC offset -> aware UTC datetime."""
-    local = day.replace(hour=hh, minute=mm)
-    return (local - timedelta(hours=offset_hours)).replace(tzinfo=timezone.utc)
+    local = day.replace(hour=int(hh), minute=int(mm))
+    return (local - timedelta(hours=int(offset_hours))).replace(tzinfo=timezone.utc)
+
+
+def parse_score(sep_token):
+    """Return (short, full) score strings, or (None, None) if not played."""
+    tok = sep_token.strip()
+    if tok == "v":
+        return None, None
+    main = re.match(r"\d{1,2}-\d{1,2}", tok).group(0)
+    pen = re.search(r"pen\.?\s*(\d{1,2}-\d{1,2})", tok)
+    aet = re.search(r"a\.e\.t", tok)
+    short = main
+    if aet and not pen:
+        short += " (aet)"
+    if pen:
+        short = f"{main} (pen {pen.group(1)})"
+    return short, tok
 
 
 def load_stadiums(path):
-    """city label -> (stadium name, country code)."""
     out = {}
     if not path.exists():
         return out
@@ -85,21 +124,16 @@ def load_stadiums(path):
         if not line or line.startswith("#") or line.lower().startswith("city"):
             continue
         parts = [p.strip() for p in line.split(",")]
-        if len(parts) < 4:
-            continue
-        city, _tz, cc, name = parts[0], parts[1], parts[2], parts[3]
-        out[city] = (name, cc)
+        if len(parts) >= 4:
+            out[parts[0]] = (parts[3], parts[2])
     return out
 
 
 def parse_group_stage(path):
-    matches = []
-    cur_group = None
-    cur_day = None
+    matches, cur_group, cur_day = [], None, None
     for raw in path.read_text(encoding="utf-8").splitlines():
-        line = raw.rstrip()
-        s = line.strip()
-        if s.startswith("▪"):  # ▪ header
+        s = raw.strip()
+        if s.startswith("▪"):
             if "Group" in s:
                 cur_group = s.replace("▪", "").replace("Group", "").strip()
             cur_day = None
@@ -108,47 +142,40 @@ def parse_group_stage(path):
         if d:
             cur_day = d
             continue
-        m = GROUP_MATCH_RE.match(line)
+        m = GROUP_MATCH_RE.match(raw)
         if m and cur_day and cur_group:
-            hh, mm, off, a, b, venue = m.groups()
+            hh, mm, off, a, sep, b, venue = m.groups()
+            short, full = parse_score(sep)
             matches.append({
-                "kind": "group",
-                "group": cur_group,
-                "utc": to_utc(cur_day, int(hh), int(mm), int(off)),
-                "home": a.strip(),
-                "away": b.strip(),
-                "venue": venue.strip(),
+                "stage": "group", "group": cur_group,
+                "utc": to_utc(cur_day, hh, mm, off),
+                "home": a.strip(), "away": b.strip(), "venue": venue.strip(),
+                "score": short, "score_full": full,
             })
     return matches
 
 
 def parse_knockout(path):
-    matches = []
-    cur_round = None
-    cur_day = None
+    matches, cur_round, cur_day = [], None, None
     for raw in path.read_text(encoding="utf-8").splitlines():
-        line = raw.rstrip()
-        s = line.strip()
+        s = raw.strip()
         if s.startswith("▪"):
-            label = s.replace("▪", "").strip()
-            cur_round = label
-            cur_day = None
+            cur_round, cur_day = s.replace("▪", "").strip(), None
             continue
         d = parse_date(s)
         if d:
             cur_day = d
             continue
-        m = KO_MATCH_RE.match(line)
-        if m and cur_day:
-            num, hh, mm, off, a, b, venue = m.groups()
+        m = KO_MATCH_RE.match(raw)
+        if m and cur_day and cur_round:
+            num, hh, mm, off, a, sep, b, venue = m.groups()
+            short, full = parse_score(sep)
             matches.append({
-                "kind": "ko",
-                "num": int(num),
-                "round": cur_round,
-                "utc": to_utc(cur_day, int(hh), int(mm), int(off)),
-                "home": a.strip(),
-                "away": b.strip(),
-                "venue": venue.strip(),
+                "stage": ROUND_TO_STAGE.get(cur_round, "final"),
+                "round": cur_round, "num": int(num),
+                "utc": to_utc(cur_day, hh, mm, off),
+                "home": a.strip(), "away": b.strip(), "venue": venue.strip(),
+                "score": short, "score_full": full,
             })
     return matches
 
@@ -159,17 +186,14 @@ def esc(text):
 
 
 def fold(line):
-    """RFC 5545 line folding at 75 octets."""
     raw = line.encode("utf-8")
     if len(raw) <= 75:
         return line
     out, i = [], 0
     while i < len(raw):
         chunk = raw[i:i + 73] if i else raw[i:i + 75]
-        # don't split a multibyte char
         while chunk and (chunk[-1] & 0xC0) == 0x80:
             chunk = chunk[:-1]
-        # back off until valid utf-8
         while True:
             try:
                 chunk.decode("utf-8"); break
@@ -181,28 +205,37 @@ def fold(line):
 
 
 def vn_str(utc_dt):
-    vn = utc_dt + timedelta(hours=7)
-    return vn.strftime("%d/%m %H:%M")
+    return (utc_dt + timedelta(hours=7)).strftime("%d/%m %H:%M")
 
 
 def build_event(m, stadiums):
     venue_name, cc = stadiums.get(m["venue"], (m["venue"], ""))
     location = f"{venue_name}, {m['venue']}" + (f" ({cc.upper()})" if cc else "")
-    home, away = m["home"], m["away"]
-    if m["kind"] == "group":
-        summary = f"{home} vs {away} — Group {m['group']}"
+    dot = STAGES[m["stage"]][0]
+    home, away, score = m["home"], m["away"], m["score"]
+
+    if m["stage"] == "group":
+        mid = score if score else "vs"
+        summary = f"{dot} {home} {mid} {away} — Group {m['group']}"
         uid = f"wc2026-g{m['group']}-{slug(home)}-vs-{slug(away)}@{UID_DOMAIN}"
         desc_head = f"Group {m['group']}"
     else:
         rshort = ROUND_SHORT.get(m["round"], m["round"])
-        summary = f"[{rshort}] {home} vs {away}"
+        if m["round"] == "Match for third place":
+            dot = "🥉"
+        mid = score if score else "vs"
+        summary = f"{dot} [{rshort}] {home} {mid} {away}"
         uid = f"wc2026-m{m['num']}@{UID_DOMAIN}"
         desc_head = f"Match {m['num']} · {m['round']}"
+
+    desc = f"{desc_head}\\n{venue_name}, {m['venue']}\\nGiờ VN: {vn_str(m['utc'])}"
+    if m["score_full"]:
+        desc += f"\\nKết quả: {home} {m['score_full']} {away}"
+    desc += "\\nFIFA World Cup 2026"
+
     dtstart = m["utc"].strftime("%Y%m%dT%H%M%SZ")
     dtend = (m["utc"] + timedelta(hours=2)).strftime("%Y%m%dT%H%M%SZ")
-    desc = (f"{desc_head}\\n{venue_name}, {m['venue']}"
-            f"\\nGiờ VN: {vn_str(m['utc'])}\\nFIFA World Cup 2026")
-    lines = [
+    return [
         "BEGIN:VEVENT",
         f"UID:{uid}",
         f"DTSTAMP:{DTSTAMP}",
@@ -221,42 +254,51 @@ def build_event(m, stadiums):
         "END:VALARM",
         "END:VEVENT",
     ]
-    return lines
 
 
-def main():
-    ap = argparse.ArgumentParser()
-    ap.add_argument("--data-dir", required=True)
-    ap.add_argument("--out", default="worldcup.ics")
-    args = ap.parse_args()
-
-    d = Path(args.data_dir)
-    stadiums = load_stadiums(d / "cup_stadiums.csv")
-    matches = parse_group_stage(d / "cup.txt") + parse_knockout(d / "cup_finals.txt")
-    matches.sort(key=lambda m: m["utc"])
-
-    if len(matches) != 104:
-        print(f"WARNING: parsed {len(matches)} matches (expected 104)", file=sys.stderr)
-
+def write_calendar(path, name, color, matches, stadiums):
     out = [
         "BEGIN:VCALENDAR",
         "VERSION:2.0",
         "PRODID:-//nh0znoisung//WorldCup2026//EN",
         "CALSCALE:GREGORIAN",
         "METHOD:PUBLISH",
-        "X-WR-CALNAME:FIFA World Cup 2026",
-        "X-WR-CALDESC:All 104 matches — auto-updated daily",
+        fold(f"X-WR-CALNAME:{esc(name)}"),
+        f"COLOR:{color}",
         "X-WR-TIMEZONE:Asia/Ho_Chi_Minh",
-        "REFRESH-INTERVAL;VALUE=DURATION:PT12H",
-        "X-PUBLISHED-TTL:PT12H",
+        "REFRESH-INTERVAL;VALUE=DURATION:PT6H",
+        "X-PUBLISHED-TTL:PT6H",
     ]
     for m in matches:
         out += build_event(m, stadiums)
     out.append("END:VCALENDAR")
+    Path(path).write_text("\r\n".join(out) + "\r\n", encoding="utf-8")
+    print(f"Wrote {path}: {len(matches)} matches")
 
-    text = "\r\n".join(out) + "\r\n"
-    Path(args.out).write_text(text, encoding="utf-8")
-    print(f"Wrote {args.out}: {len(matches)} matches")
+
+def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--data-dir", required=True)
+    ap.add_argument("--out-dir", default=".")
+    args = ap.parse_args()
+
+    d = Path(args.data_dir)
+    out = Path(args.out_dir)
+    stadiums = load_stadiums(d / "cup_stadiums.csv")
+    matches = parse_group_stage(d / "cup.txt") + parse_knockout(d / "cup_finals.txt")
+    matches.sort(key=lambda m: m["utc"])
+
+    if len(matches) != 104:
+        print(f"ERROR: parsed {len(matches)} matches (expected 104)", file=sys.stderr)
+        sys.exit(1)
+
+    # combined calendar
+    write_calendar(out / "worldcup.ics", "FIFA World Cup 2026", "green",
+                   matches, stadiums)
+    # per-stage calendars (subscribe separately -> set a color per stage)
+    for key, (_dot, name, color) in STAGES.items():
+        write_calendar(out / f"worldcup-{key}.ics", name, color,
+                       [m for m in matches if m["stage"] == key], stadiums)
 
 
 if __name__ == "__main__":
