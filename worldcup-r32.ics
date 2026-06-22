@@ -49,10 +49,10 @@ UID:wc2026-m74@wc2026.nh0znoisung.github
 DTSTAMP:20251205T120000Z
 DTSTART:20260629T203000Z
 DTEND:20260629T223000Z
-SUMMARY:🔵 [R32] 1E vs 3A/B/C/D/F
-LOCATION:Gillette Stadium\, Boston (Foxborough) (US)
-DESCRIPTION:Match 74 · Round of 32\nGillette Stadium, Boston (Foxborough)\
- nGiờ VN: 30/06 03:30\nFIFA World Cup 2026
+SUMMARY:🔵 [R32] Germany vs 3A/B/C/D/F
+LOCATION:Boston (Foxborough)      ## 1E\, Boston (Foxborough)      ## 1E
+DESCRIPTION:Match 74 · Round of 32\nBoston (Foxborough)      ## 1E, Boston
+  (Foxborough)      ## 1E\nGiờ VN: 30/06 03:30\nFIFA World Cup 2026
 STATUS:CONFIRMED
 TRANSP:TRANSPARENT
 SEQUENCE:0
@@ -121,10 +121,10 @@ UID:wc2026-m79@wc2026.nh0znoisung.github
 DTSTAMP:20251205T120000Z
 DTSTART:20260701T010000Z
 DTEND:20260701T030000Z
-SUMMARY:🔵 [R32] 1A vs 3C/E/F/H/I
-LOCATION:Estadio Azteca\, Mexico City (MX)
-DESCRIPTION:Match 79 · Round of 32\nEstadio Azteca, Mexico City\nGiờ VN:
-  01/07 08:00\nFIFA World Cup 2026
+SUMMARY:🔵 [R32] Mexico vs 3C/E/F/H/I
+LOCATION:Mexico City              ## 1A\, Mexico City              ## 1A
+DESCRIPTION:Match 79 · Round of 32\nMexico City              ## 1A, Mexico
+  City              ## 1A\nGiờ VN: 01/07 08:00\nFIFA World Cup 2026
 STATUS:CONFIRMED
 TRANSP:TRANSPARENT
 SEQUENCE:0
@@ -175,10 +175,12 @@ UID:wc2026-m81@wc2026.nh0znoisung.github
 DTSTAMP:20251205T120000Z
 DTSTART:20260702T000000Z
 DTEND:20260702T020000Z
-SUMMARY:🔵 [R32] 1D vs 3B/E/F/I/J
-LOCATION:Levi's Stadium\, San Francisco Bay Area (Santa Clara) (US)
-DESCRIPTION:Match 81 · Round of 32\nLevi's Stadium, San Francisco Bay Area
-  (Santa Clara)\nGiờ VN: 02/07 07:00\nFIFA World Cup 2026
+SUMMARY:🔵 [R32] USA vs 3B/E/F/I/J
+LOCATION:San Francisco Bay Area (Santa Clara)       ## 1D\, San Francisco B
+ ay Area (Santa Clara)       ## 1D
+DESCRIPTION:Match 81 · Round of 32\nSan Francisco Bay Area (Santa Clara)  
+      ## 1D, San Francisco Bay Area (Santa Clara)       ## 1D\nGiờ VN: 0
+ 2/07 07:00\nFIFA World Cup 2026
 STATUS:CONFIRMED
 TRANSP:TRANSPARENT
 SEQUENCE:0
