@@ -13,10 +13,12 @@ UID:wc2026-m73@wc2026.nh0znoisung.github
 DTSTAMP:20251205T120000Z
 DTSTART:20260628T190000Z
 DTEND:20260628T210000Z
-SUMMARY:🔵 [R32] 2A vs 2B
-LOCATION:SoFi Stadium\, Los Angeles (Inglewood) (US)
-DESCRIPTION:Match 73 · Round of 32\nSoFi Stadium, Los Angeles (Inglewood)\
- nGiờ VN: 29/06 02:00\nFIFA World Cup 2026
+SUMMARY:🔵 [R32] South Africa vs Canada
+LOCATION:Los Angeles (Inglewood)   ## 2A / 2B\, Los Angeles (Inglewood)   #
+ # 2A / 2B
+DESCRIPTION:Match 73 · Round of 32\nLos Angeles (Inglewood)   ## 2A / 2B, 
+ Los Angeles (Inglewood)   ## 2A / 2B\nGiờ VN: 29/06 02:00\nFIFA World C
+ up 2026
 STATUS:CONFIRMED
 TRANSP:TRANSPARENT
 SEQUENCE:0
@@ -31,10 +33,10 @@ UID:wc2026-m76@wc2026.nh0znoisung.github
 DTSTAMP:20251205T120000Z
 DTSTART:20260629T170000Z
 DTEND:20260629T190000Z
-SUMMARY:🔵 [R32] 1C vs 2F
-LOCATION:NRG Stadium\, Houston (US)
-DESCRIPTION:Match 76 · Round of 32\nNRG Stadium, Houston\nGiờ VN: 30/06 
- 00:00\nFIFA World Cup 2026
+SUMMARY:🔵 [R32] Brazil vs 2F
+LOCATION:Houston   ## 1C\, Houston   ## 1C
+DESCRIPTION:Match 76 · Round of 32\nHouston   ## 1C, Houston   ## 1C\nGi
+ ờ VN: 30/06 00:00\nFIFA World Cup 2026
 STATUS:CONFIRMED
 TRANSP:TRANSPARENT
 SEQUENCE:0
@@ -67,10 +69,10 @@ UID:wc2026-m75@wc2026.nh0znoisung.github
 DTSTAMP:20251205T120000Z
 DTSTART:20260630T010000Z
 DTEND:20260630T030000Z
-SUMMARY:🔵 [R32] 1F vs 2C
-LOCATION:Estadio BBVA\, Monterrey (Guadalupe) (MX)
-DESCRIPTION:Match 75 · Round of 32\nEstadio BBVA, Monterrey (Guadalupe)\nG
- iờ VN: 30/06 08:00\nFIFA World Cup 2026
+SUMMARY:🔵 [R32] 1F vs Morocco
+LOCATION:Monterrey (Guadalupe)   ## 2C\, Monterrey (Guadalupe)   ## 2C
+DESCRIPTION:Match 75 · Round of 32\nMonterrey (Guadalupe)   ## 2C, Monterr
+ ey (Guadalupe)   ## 2C\nGiờ VN: 30/06 08:00\nFIFA World Cup 2026
 STATUS:CONFIRMED
 TRANSP:TRANSPARENT
 SEQUENCE:0
@@ -231,10 +233,10 @@ UID:wc2026-m85@wc2026.nh0znoisung.github
 DTSTAMP:20251205T120000Z
 DTSTART:20260703T030000Z
 DTEND:20260703T050000Z
-SUMMARY:🔵 [R32] 1B vs 3E/F/G/I/J
-LOCATION:BC Place\, Vancouver (CA)
-DESCRIPTION:Match 85 · Round of 32\nBC Place, Vancouver\nGiờ VN: 03/07 1
- 0:00\nFIFA World Cup 2026
+SUMMARY:🔵 [R32] Switzerland vs 3E/F/G/I/J
+LOCATION:Vancouver   ## 1B\, Vancouver   ## 1B
+DESCRIPTION:Match 85 · Round of 32\nVancouver   ## 1B, Vancouver   ## 1B\n
+ Giờ VN: 03/07 10:00\nFIFA World Cup 2026
 STATUS:CONFIRMED
 TRANSP:TRANSPARENT
 SEQUENCE:0
