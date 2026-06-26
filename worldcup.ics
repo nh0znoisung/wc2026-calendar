@@ -1033,10 +1033,10 @@ UID:wc2026-gF-japan-vs-sweden@wc2026.nh0znoisung.github
 DTSTAMP:20251205T120000Z
 DTSTART:20260625T230000Z
 DTEND:20260626T010000Z
-SUMMARY:🟢 Japan vs Sweden — Group F
+SUMMARY:🟢 Japan 1-1 Sweden — Group F
 LOCATION:AT&T Stadium\, Dallas (Arlington) (US)
 DESCRIPTION:Group F\nAT&T Stadium, Dallas (Arlington)\nGiờ VN: 26/06 06:0
- 0\nFIFA World Cup 2026
+ 0\nKết quả: Japan 1-1 (0-0) Sweden\nFIFA World Cup 2026
 STATUS:CONFIRMED
 TRANSP:TRANSPARENT
 SEQUENCE:0
@@ -1051,10 +1051,10 @@ UID:wc2026-gF-tunisia-vs-netherlands@wc2026.nh0znoisung.github
 DTSTAMP:20251205T120000Z
 DTSTART:20260625T230000Z
 DTEND:20260626T010000Z
-SUMMARY:🟢 Tunisia vs Netherlands — Group F
+SUMMARY:🟢 Tunisia 1-3 Netherlands — Group F
 LOCATION:Arrowhead Stadium\, Kansas City (US)
 DESCRIPTION:Group F\nArrowhead Stadium, Kansas City\nGiờ VN: 26/06 06:00\
- nFIFA World Cup 2026
+ nKết quả: Tunisia 1-3 (0-2) Netherlands\nFIFA World Cup 2026
 STATUS:CONFIRMED
 TRANSP:TRANSPARENT
 SEQUENCE:0
@@ -1069,10 +1069,10 @@ UID:wc2026-gD-turkey-vs-usa@wc2026.nh0znoisung.github
 DTSTAMP:20251205T120000Z
 DTSTART:20260626T020000Z
 DTEND:20260626T040000Z
-SUMMARY:🟢 Turkey vs USA — Group D
+SUMMARY:🟢 Turkey 3-2 USA — Group D
 LOCATION:SoFi Stadium\, Los Angeles (Inglewood) (US)
 DESCRIPTION:Group D\nSoFi Stadium, Los Angeles (Inglewood)\nGiờ VN: 26/06
-  09:00\nFIFA World Cup 2026
+  09:00\nKết quả: Turkey 3-2 (2-1) USA\nFIFA World Cup 2026
 STATUS:CONFIRMED
 TRANSP:TRANSPARENT
 SEQUENCE:0
@@ -1087,10 +1087,11 @@ UID:wc2026-gD-paraguay-vs-australia@wc2026.nh0znoisung.github
 DTSTAMP:20251205T120000Z
 DTSTART:20260626T020000Z
 DTEND:20260626T040000Z
-SUMMARY:🟢 Paraguay vs Australia — Group D
+SUMMARY:🟢 Paraguay 0-0 Australia — Group D
 LOCATION:Levi's Stadium\, San Francisco Bay Area (Santa Clara) (US)
 DESCRIPTION:Group D\nLevi's Stadium, San Francisco Bay Area (Santa Clara)\n
- Giờ VN: 26/06 09:00\nFIFA World Cup 2026
+ Giờ VN: 26/06 09:00\nKết quả: Paraguay 0-0 (0-0) Australia\nFIFA Wo
+ rld Cup 2026
 STATUS:CONFIRMED
 TRANSP:TRANSPARENT
 SEQUENCE:0
