@@ -1342,10 +1342,10 @@ UID:wc2026-m76@wc2026.nh0znoisung.github
 DTSTAMP:20251205T120000Z
 DTSTART:20260629T170000Z
 DTEND:20260629T190000Z
-SUMMARY:🔵 [R32] Brazil vs 2F
-LOCATION:Houston   ## 1C\, Houston   ## 1C
-DESCRIPTION:Match 76 · Round of 32\nHouston   ## 1C, Houston   ## 1C\nGi
- ờ VN: 30/06 00:00\nFIFA World Cup 2026
+SUMMARY:🔵 [R32] Brazil vs Japan
+LOCATION:Houston   ## 1C / 2F\, Houston   ## 1C / 2F
+DESCRIPTION:Match 76 · Round of 32\nHouston   ## 1C / 2F, Houston   ## 1C 
+ / 2F\nGiờ VN: 30/06 00:00\nFIFA World Cup 2026
 STATUS:CONFIRMED
 TRANSP:TRANSPARENT
 SEQUENCE:0
@@ -1378,10 +1378,12 @@ UID:wc2026-m75@wc2026.nh0znoisung.github
 DTSTAMP:20251205T120000Z
 DTSTART:20260630T010000Z
 DTEND:20260630T030000Z
-SUMMARY:🔵 [R32] 1F vs Morocco
-LOCATION:Monterrey (Guadalupe)   ## 2C\, Monterrey (Guadalupe)   ## 2C
-DESCRIPTION:Match 75 · Round of 32\nMonterrey (Guadalupe)   ## 2C, Monterr
- ey (Guadalupe)   ## 2C\nGiờ VN: 30/06 08:00\nFIFA World Cup 2026
+SUMMARY:🔵 [R32] Netherlands vs Morocco
+LOCATION:Monterrey (Guadalupe)   ## 1F / 2C\, Monterrey (Guadalupe)   ## 1F
+  / 2C
+DESCRIPTION:Match 75 · Round of 32\nMonterrey (Guadalupe)   ## 1F / 2C, Mo
+ nterrey (Guadalupe)   ## 1F / 2C\nGiờ VN: 30/06 08:00\nFIFA World Cup 2
+ 026
 STATUS:CONFIRMED
 TRANSP:TRANSPARENT
 SEQUENCE:0
@@ -1396,10 +1398,10 @@ UID:wc2026-m78@wc2026.nh0znoisung.github
 DTSTAMP:20251205T120000Z
 DTSTART:20260630T170000Z
 DTEND:20260630T190000Z
-SUMMARY:🔵 [R32] 2E vs 2I
-LOCATION:AT&T Stadium\, Dallas (Arlington) (US)
-DESCRIPTION:Match 78 · Round of 32\nAT&T Stadium, Dallas (Arlington)\nGi
- ờ VN: 01/07 00:00\nFIFA World Cup 2026
+SUMMARY:🔵 [R32] Ivory Coast vs 2I
+LOCATION:Dallas (Arlington)   ## 2E\, Dallas (Arlington)   ## 2E
+DESCRIPTION:Match 78 · Round of 32\nDallas (Arlington)   ## 2E, Dallas (Ar
+ lington)   ## 2E\nGiờ VN: 01/07 00:00\nFIFA World Cup 2026
 STATUS:CONFIRMED
 TRANSP:TRANSPARENT
 SEQUENCE:0
@@ -1560,10 +1562,10 @@ UID:wc2026-m88@wc2026.nh0znoisung.github
 DTSTAMP:20251205T120000Z
 DTSTART:20260703T180000Z
 DTEND:20260703T200000Z
-SUMMARY:🔵 [R32] 2D vs 2G
-LOCATION:AT&T Stadium\, Dallas (Arlington) (US)
-DESCRIPTION:Match 88 · Round of 32\nAT&T Stadium, Dallas (Arlington)\nGi
- ờ VN: 04/07 01:00\nFIFA World Cup 2026
+SUMMARY:🔵 [R32] Australia vs 2G
+LOCATION:Dallas (Arlington)   ## 2D\, Dallas (Arlington)   ## 2D
+DESCRIPTION:Match 88 · Round of 32\nDallas (Arlington)   ## 2D, Dallas (Ar
+ lington)   ## 2D\nGiờ VN: 04/07 01:00\nFIFA World Cup 2026
 STATUS:CONFIRMED
 TRANSP:TRANSPARENT
 SEQUENCE:0
