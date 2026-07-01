@@ -69,7 +69,10 @@ def event_id(fixture):
     else:
         key = f"m{fixture['num']}"
     import hashlib
-    return "wc2026" + hashlib.sha1(key.encode()).hexdigest()  # all chars in [0-9a-f]
+    # Google event IDs must match [a-v0-9]{5,1024}. A hex digest is all
+    # [0-9a-f] (valid) — fold the "wc2026" namespace into the hash input
+    # instead of prefixing it (the letter 'w' is NOT allowed).
+    return hashlib.sha1(("wc2026-" + key).encode()).hexdigest()
 
 
 def fetch_espn():
