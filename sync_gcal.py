@@ -33,7 +33,7 @@ import unicodedata
 from datetime import datetime, timedelta, timezone
 
 import requests
-import generate_ics as g  # reuse the schedule parser + helpers
+import wc_schedule as g  # shared schedule parser + helpers
 
 ESPN_URL = ("https://site.api.espn.com/apis/site/v2/sports/soccer/"
             "fifa.world/scoreboard?dates=20260611-20260719&limit=1000")
@@ -56,6 +56,9 @@ FAV_COLOR = "11"          # Tomato   - đội yêu thích luôn đỏ (đè màu
 # Sửa ở đây, HOẶC đặt GitHub repo Variable tên FAVORITE_TEAMS (Settings ->
 # Secrets and variables -> Actions -> tab Variables), vd: "Portugal, Argentina, France".
 DEFAULT_FAVORITES = "Portugal, Argentina, France"
+
+# Nhắc trước trận bao nhiêu phút (popup). Đổi số này nếu muốn.
+REMINDER_MIN = 30
 
 NAME_ALIASES = {
     "turkiye": "turkey", "korearepublic": "southkorea", "irkiran": "iran",
@@ -216,7 +219,7 @@ def upsert(svc, cal_id, fixture, live, favs, dry=False):
                 "timeZone": "Etc/UTC"},
         "colorId": color,
         "reminders": {"useDefault": False,
-                      "overrides": [{"method": "popup", "minutes": 60}]},
+                      "overrides": [{"method": "popup", "minutes": REMINDER_MIN}]},
     }
     if dry:
         print(f"[dry] {body['summary']}  | color {color} | {start:%Y-%m-%d %H:%MZ}")

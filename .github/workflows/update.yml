@@ -1,28 +1,28 @@
-name: Update World Cup 2026 calendar
+name: Sync World Cup 2026 to Google Calendar
 
 on:
   schedule:
-    # Mỗi 5 phút (mức nhỏ nhất GitHub cho phép). Phục vụ live sync sang Google
-    # Calendar API. GitHub cron có thể trễ vài phút khi hệ thống bận — bình thường.
+    # Mỗi 5 phút (mức nhỏ nhất GitHub cho phép). GitHub cron có thể trễ vài phút
+    # khi hệ thống bận — bình thường.
     - cron: "*/5 * * * *"
   workflow_dispatch: {}   # cho phép bấm chạy tay trong tab Actions
   push:
     branches: [main]       # chạy lại mỗi khi sửa code
 
 permissions:
-  contents: write
+  contents: read
 
 concurrency:
-  group: update-ics
+  group: sync-gcal
   cancel-in-progress: false
 
 jobs:
-  build:
+  sync:
     runs-on: ubuntu-latest
     env:
       GCAL_ID: ${{ secrets.GCAL_ID }}
       GOOGLE_SA_KEY: ${{ secrets.GOOGLE_SA_KEY }}
-      FAVORITE_TEAMS: ${{ vars.FAVORITE_TEAMS }}   # repo Variable (không phải secret); trống thì dùng mặc định trong code
+      FAVORITE_TEAMS: ${{ vars.FAVORITE_TEAMS }}   # repo Variable (không phải secret); trống thì dùng mặc định
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
@@ -33,48 +33,17 @@ jobs:
           python-version: "3.11"
 
       - name: Install deps
-        run: pip install icalendar
+        run: pip install requests google-api-python-client google-auth
 
       - name: Fetch fixtures data (openfootball)
         run: git clone --depth 1 https://github.com/openfootball/worldcup.git _data
 
-      - name: Generate calendars
-        run: |
-          DATA=$(echo _data/2026--*)
-          echo "Using data dir: $DATA"
-          python generate_ics.py --data-dir "$DATA" --out-dir .
-
-      - name: Validate
-        run: |
-          python - <<'PY'
-          from icalendar import Calendar
-          from pathlib import Path
-          def events(p):
-              return [c for c in Calendar.from_ical(Path(p).read_bytes()).walk() if c.name=='VEVENT']
-          combined = events('worldcup.ics')
-          assert len(combined)==104, f"expected 104 events, got {len(combined)}"
-          assert len({str(e['UID']) for e in combined})==104, "duplicate UIDs"
-          total = sum(len(events(p)) for p in Path('.').glob('worldcup-*.ics'))
-          assert total==104, f"per-stage files sum to {total}, expected 104"
-          print("OK: 104 events combined + per-stage split checks out")
-          PY
-
-      - name: Commit if changed
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add *.ics
-          if git diff --staged --quiet; then
-            echo "No changes — nothing to commit."
-          else
-            git commit -m "Update worldcup.ics ($(date -u +'%Y-%m-%d %H:%MZ'))"
-            git push
-          fi
-
-      # ---- Live sync to Google Calendar (chỉ chạy nếu đã cấu hình secrets) ----
-      - name: Live sync to Google Calendar
+      - name: Sync to Google Calendar
         if: ${{ env.GCAL_ID != '' && env.GOOGLE_SA_KEY != '' }}
         run: |
-          pip install requests google-api-python-client google-auth
           DATA=$(echo _data/2026--*)
           python sync_gcal.py --data-dir "$DATA"
+
+      - name: Warn if secrets missing
+        if: ${{ env.GCAL_ID == '' || env.GOOGLE_SA_KEY == '' }}
+        run: echo "::warning::GCAL_ID / GOOGLE_SA_KEY chưa cấu hình — bỏ qua sync. Xem README mục Mode B."
