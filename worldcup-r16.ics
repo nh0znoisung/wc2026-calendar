@@ -13,10 +13,10 @@ UID:wc2026-m90@wc2026.nh0znoisung.github
 DTSTAMP:20251205T120000Z
 DTSTART:20260704T170000Z
 DTEND:20260704T190000Z
-SUMMARY:🟣 [R16] W73 vs W75
-LOCATION:NRG Stadium\, Houston (US)
-DESCRIPTION:Match 90 · Round of 16\nNRG Stadium, Houston\nGiờ VN: 05/07 
- 00:00\nFIFA World Cup 2026
+SUMMARY:🟣 [R16] Canada vs Morocco
+LOCATION:Houston   ## W73 / W75\, Houston   ## W73 / W75
+DESCRIPTION:Match 90 · Round of 16\nHouston   ## W73 / W75, Houston   ## W
+ 73 / W75\nGiờ VN: 05/07 00:00\nFIFA World Cup 2026
 STATUS:CONFIRMED
 TRANSP:TRANSPARENT
 SEQUENCE:0
@@ -31,10 +31,10 @@ UID:wc2026-m89@wc2026.nh0znoisung.github
 DTSTAMP:20251205T120000Z
 DTSTART:20260704T210000Z
 DTEND:20260704T230000Z
-SUMMARY:🟣 [R16] W74 vs W77
-LOCATION:Lincoln Financial Field\, Philadelphia (US)
-DESCRIPTION:Match 89 · Round of 16\nLincoln Financial Field, Philadelphia\
- nGiờ VN: 05/07 04:00\nFIFA World Cup 2026
+SUMMARY:🟣 [R16] Paraguay vs France
+LOCATION:Philadelphia   ## W74 / W77\, Philadelphia   ## W74 / W77
+DESCRIPTION:Match 89 · Round of 16\nPhiladelphia   ## W74 / W77, Philadelp
+ hia   ## W74 / W77\nGiờ VN: 05/07 04:00\nFIFA World Cup 2026
 STATUS:CONFIRMED
 TRANSP:TRANSPARENT
 SEQUENCE:0
@@ -49,10 +49,12 @@ UID:wc2026-m91@wc2026.nh0znoisung.github
 DTSTAMP:20251205T120000Z
 DTSTART:20260705T200000Z
 DTEND:20260705T220000Z
-SUMMARY:🟣 [R16] W76 vs W78
-LOCATION:MetLife Stadium\, New York/New Jersey (East Rutherford) (US)
-DESCRIPTION:Match 91 · Round of 16\nMetLife Stadium, New York/New Jersey (
- East Rutherford)\nGiờ VN: 06/07 03:00\nFIFA World Cup 2026
+SUMMARY:🟣 [R16] Brazil vs Norway
+LOCATION:New York/New Jersey (East Rutherford)   ## W76 / W78\, New York/Ne
+ w Jersey (East Rutherford)   ## W76 / W78
+DESCRIPTION:Match 91 · Round of 16\nNew York/New Jersey (East Rutherford) 
+   ## W76 / W78, New York/New Jersey (East Rutherford)   ## W76 / W78\nGi
+ ờ VN: 06/07 03:00\nFIFA World Cup 2026
 STATUS:CONFIRMED
 TRANSP:TRANSPARENT
 SEQUENCE:0
@@ -67,10 +69,10 @@ UID:wc2026-m92@wc2026.nh0znoisung.github
 DTSTAMP:20251205T120000Z
 DTSTART:20260706T000000Z
 DTEND:20260706T020000Z
-SUMMARY:🟣 [R16] W79 vs W80
-LOCATION:Estadio Azteca\, Mexico City (MX)
-DESCRIPTION:Match 92 · Round of 16\nEstadio Azteca, Mexico City\nGiờ VN:
-  06/07 07:00\nFIFA World Cup 2026
+SUMMARY:🟣 [R16] Mexico vs W80
+LOCATION:Mexico City   ## W79\, Mexico City   ## W79
+DESCRIPTION:Match 92 · Round of 16\nMexico City   ## W79, Mexico City   ##
+  W79\nGiờ VN: 06/07 07:00\nFIFA World Cup 2026
 STATUS:CONFIRMED
 TRANSP:TRANSPARENT
 SEQUENCE:0

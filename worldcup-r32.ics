@@ -13,10 +13,12 @@ UID:wc2026-m73@wc2026.nh0znoisung.github
 DTSTAMP:20251205T120000Z
 DTSTART:20260628T190000Z
 DTEND:20260628T210000Z
-SUMMARY:🔵 [R32] 2A vs 2B
-LOCATION:SoFi Stadium\, Los Angeles (Inglewood) (US)
-DESCRIPTION:Match 73 · Round of 32\nSoFi Stadium, Los Angeles (Inglewood)\
- nGiờ VN: 29/06 02:00\nFIFA World Cup 2026
+SUMMARY:🔵 [R32] South Africa 0-1 Canada
+LOCATION:Los Angeles (Inglewood)   ## 2A / 2B\, Los Angeles (Inglewood)   #
+ # 2A / 2B
+DESCRIPTION:Match 73 · Round of 32\nLos Angeles (Inglewood)   ## 2A / 2B, 
+ Los Angeles (Inglewood)   ## 2A / 2B\nGiờ VN: 29/06 02:00\nKết quả:
+  South Africa 0-1 (0-0) Canada\nFIFA World Cup 2026
 STATUS:CONFIRMED
 TRANSP:TRANSPARENT
 SEQUENCE:0
@@ -31,10 +33,11 @@ UID:wc2026-m76@wc2026.nh0znoisung.github
 DTSTAMP:20251205T120000Z
 DTSTART:20260629T170000Z
 DTEND:20260629T190000Z
-SUMMARY:🔵 [R32] 1C vs 2F
-LOCATION:NRG Stadium\, Houston (US)
-DESCRIPTION:Match 76 · Round of 32\nNRG Stadium, Houston\nGiờ VN: 30/06 
- 00:00\nFIFA World Cup 2026
+SUMMARY:🔵 [R32] Brazil 2-1 Japan
+LOCATION:Houston   ## 1C / 2F\, Houston   ## 1C / 2F
+DESCRIPTION:Match 76 · Round of 32\nHouston   ## 1C / 2F, Houston   ## 1C 
+ / 2F\nGiờ VN: 30/06 00:00\nKết quả: Brazil 2-1 (0-1) Japan\nFIFA Wo
+ rld Cup 2026
 STATUS:CONFIRMED
 TRANSP:TRANSPARENT
 SEQUENCE:0
@@ -49,10 +52,13 @@ UID:wc2026-m74@wc2026.nh0znoisung.github
 DTSTAMP:20251205T120000Z
 DTSTART:20260629T203000Z
 DTEND:20260629T223000Z
-SUMMARY:🔵 [R32] 1E vs 3A/B/C/D/F
-LOCATION:Gillette Stadium\, Boston (Foxborough) (US)
-DESCRIPTION:Match 74 · Round of 32\nGillette Stadium, Boston (Foxborough)\
- nGiờ VN: 30/06 03:30\nFIFA World Cup 2026
+SUMMARY:🔵 [R32] Germany 1-1 (aet) (1-1\, 0-1)\, 3-4 pen. Paraguay
+LOCATION:Boston (Foxborough)      ## 1E / 3A/B/C/D/F\, Boston (Foxborough) 
+      ## 1E / 3A/B/C/D/F
+DESCRIPTION:Match 74 · Round of 32\nBoston (Foxborough)      ## 1E / 3A/B/
+ C/D/F, Boston (Foxborough)      ## 1E / 3A/B/C/D/F\nGiờ VN: 30/06 03:30
+ \nKết quả: Germany 1-1 a.e.t. (1-1, 0-1), 3-4 pen. Paraguay\nFIFA Wor
+ ld Cup 2026
 STATUS:CONFIRMED
 TRANSP:TRANSPARENT
 SEQUENCE:0
@@ -67,10 +73,12 @@ UID:wc2026-m75@wc2026.nh0znoisung.github
 DTSTAMP:20251205T120000Z
 DTSTART:20260630T010000Z
 DTEND:20260630T030000Z
-SUMMARY:🔵 [R32] 1F vs 2C
-LOCATION:Estadio BBVA\, Monterrey (Guadalupe) (MX)
-DESCRIPTION:Match 75 · Round of 32\nEstadio BBVA, Monterrey (Guadalupe)\nG
- iờ VN: 30/06 08:00\nFIFA World Cup 2026
+SUMMARY:🔵 [R32] Netherlands 1-1 (aet) (1-1\, 0-0)\, 2-3 pen. Morocco
+LOCATION:Monterrey (Guadalupe)   ## 1F / 2C\, Monterrey (Guadalupe)   ## 1F
+  / 2C
+DESCRIPTION:Match 75 · Round of 32\nMonterrey (Guadalupe)   ## 1F / 2C, Mo
+ nterrey (Guadalupe)   ## 1F / 2C\nGiờ VN: 30/06 08:00\nKết quả: Net
+ herlands 1-1 a.e.t. (1-1, 0-0), 2-3 pen. Morocco\nFIFA World Cup 2026
 STATUS:CONFIRMED
 TRANSP:TRANSPARENT
 SEQUENCE:0
@@ -85,10 +93,11 @@ UID:wc2026-m78@wc2026.nh0znoisung.github
 DTSTAMP:20251205T120000Z
 DTSTART:20260630T170000Z
 DTEND:20260630T190000Z
-SUMMARY:🔵 [R32] 2E vs 2I
-LOCATION:AT&T Stadium\, Dallas (Arlington) (US)
-DESCRIPTION:Match 78 · Round of 32\nAT&T Stadium, Dallas (Arlington)\nGi
- ờ VN: 01/07 00:00\nFIFA World Cup 2026
+SUMMARY:🔵 [R32] Ivory Coast 1-2 Norway
+LOCATION:Dallas (Arlington)   ## 2E / 2I\, Dallas (Arlington)   ## 2E / 2I
+DESCRIPTION:Match 78 · Round of 32\nDallas (Arlington)   ## 2E / 2I, Dalla
+ s (Arlington)   ## 2E / 2I\nGiờ VN: 01/07 00:00\nKết quả: Ivory Coa
+ st 1-2 (0-1) Norway\nFIFA World Cup 2026
 STATUS:CONFIRMED
 TRANSP:TRANSPARENT
 SEQUENCE:0
@@ -103,10 +112,13 @@ UID:wc2026-m77@wc2026.nh0znoisung.github
 DTSTAMP:20251205T120000Z
 DTSTART:20260630T210000Z
 DTEND:20260630T230000Z
-SUMMARY:🔵 [R32] 1I vs 3C/D/F/G/H
-LOCATION:MetLife Stadium\, New York/New Jersey (East Rutherford) (US)
-DESCRIPTION:Match 77 · Round of 32\nMetLife Stadium, New York/New Jersey (
- East Rutherford)\nGiờ VN: 01/07 04:00\nFIFA World Cup 2026
+SUMMARY:🔵 [R32] France 3-0 Sweden
+LOCATION:New York/New Jersey (East Rutherford)   ## 1I / 3C/D/F/G/H\, New Y
+ ork/New Jersey (East Rutherford)   ## 1I / 3C/D/F/G/H
+DESCRIPTION:Match 77 · Round of 32\nNew York/New Jersey (East Rutherford) 
+   ## 1I / 3C/D/F/G/H, New York/New Jersey (East Rutherford)   ## 1I / 3C/
+ D/F/G/H\nGiờ VN: 01/07 04:00\nKết quả: France 3-0 (1-0) Sweden\nFIF
+ A World Cup 2026
 STATUS:CONFIRMED
 TRANSP:TRANSPARENT
 SEQUENCE:0
@@ -121,10 +133,12 @@ UID:wc2026-m79@wc2026.nh0znoisung.github
 DTSTAMP:20251205T120000Z
 DTSTART:20260701T010000Z
 DTEND:20260701T030000Z
-SUMMARY:🔵 [R32] 1A vs 3C/E/F/H/I
-LOCATION:Estadio Azteca\, Mexico City (MX)
-DESCRIPTION:Match 79 · Round of 32\nEstadio Azteca, Mexico City\nGiờ VN:
-  01/07 08:00\nFIFA World Cup 2026
+SUMMARY:🔵 [R32] Mexico 2-0 Ecuador
+LOCATION:Mexico City              ## 1A / 3C/E/F/H/I\, Mexico City         
+      ## 1A / 3C/E/F/H/I
+DESCRIPTION:Match 79 · Round of 32\nMexico City              ## 1A / 3C/E/
+ F/H/I, Mexico City              ## 1A / 3C/E/F/H/I\nGiờ VN: 01/07 08:00
+ \nKết quả: Mexico 2-0 (1-0) Ecuador\nFIFA World Cup 2026
 STATUS:CONFIRMED
 TRANSP:TRANSPARENT
 SEQUENCE:0
@@ -139,10 +153,10 @@ UID:wc2026-m80@wc2026.nh0znoisung.github
 DTSTAMP:20251205T120000Z
 DTSTART:20260701T160000Z
 DTEND:20260701T180000Z
-SUMMARY:🔵 [R32] 1L vs 3E/H/I/J/K
-LOCATION:Mercedes-Benz Stadium\, Atlanta (US)
-DESCRIPTION:Match 80 · Round of 32\nMercedes-Benz Stadium, Atlanta\nGiờ 
- VN: 01/07 23:00\nFIFA World Cup 2026
+SUMMARY:🔵 [R32] England vs DR Congo
+LOCATION:Atlanta   ## 1L / 3E/H/I/J/K\, Atlanta   ## 1L / 3E/H/I/J/K
+DESCRIPTION:Match 80 · Round of 32\nAtlanta   ## 1L / 3E/H/I/J/K, Atlanta 
+   ## 1L / 3E/H/I/J/K\nGiờ VN: 01/07 23:00\nFIFA World Cup 2026
 STATUS:CONFIRMED
 TRANSP:TRANSPARENT
 SEQUENCE:0
@@ -157,10 +171,10 @@ UID:wc2026-m82@wc2026.nh0znoisung.github
 DTSTAMP:20251205T120000Z
 DTSTART:20260701T200000Z
 DTEND:20260701T220000Z
-SUMMARY:🔵 [R32] 1G vs 3A/E/H/I/J
-LOCATION:Lumen Field\, Seattle (US)
-DESCRIPTION:Match 82 · Round of 32\nLumen Field, Seattle\nGiờ VN: 02/07 
- 03:00\nFIFA World Cup 2026
+SUMMARY:🔵 [R32] Belgium vs Senegal
+LOCATION:Seattle   ## 1G / 3A/E/H/I/J\, Seattle   ## 1G / 3A/E/H/I/J
+DESCRIPTION:Match 82 · Round of 32\nSeattle   ## 1G / 3A/E/H/I/J, Seattle 
+   ## 1G / 3A/E/H/I/J\nGiờ VN: 02/07 03:00\nFIFA World Cup 2026
 STATUS:CONFIRMED
 TRANSP:TRANSPARENT
 SEQUENCE:0
@@ -175,10 +189,12 @@ UID:wc2026-m81@wc2026.nh0znoisung.github
 DTSTAMP:20251205T120000Z
 DTSTART:20260702T000000Z
 DTEND:20260702T020000Z
-SUMMARY:🔵 [R32] 1D vs 3B/E/F/I/J
-LOCATION:Levi's Stadium\, San Francisco Bay Area (Santa Clara) (US)
-DESCRIPTION:Match 81 · Round of 32\nLevi's Stadium, San Francisco Bay Area
-  (Santa Clara)\nGiờ VN: 02/07 07:00\nFIFA World Cup 2026
+SUMMARY:🔵 [R32] USA vs Bosnia & Herzegovina
+LOCATION:San Francisco Bay Area (Santa Clara)       ## 1D / 3B/E/F/I/J\, Sa
+ n Francisco Bay Area (Santa Clara)       ## 1D / 3B/E/F/I/J
+DESCRIPTION:Match 81 · Round of 32\nSan Francisco Bay Area (Santa Clara)  
+      ## 1D / 3B/E/F/I/J, San Francisco Bay Area (Santa Clara)       ## 1D
+  / 3B/E/F/I/J\nGiờ VN: 02/07 07:00\nFIFA World Cup 2026
 STATUS:CONFIRMED
 TRANSP:TRANSPARENT
 SEQUENCE:0
@@ -193,10 +209,12 @@ UID:wc2026-m84@wc2026.nh0znoisung.github
 DTSTAMP:20251205T120000Z
 DTSTART:20260702T190000Z
 DTEND:20260702T210000Z
-SUMMARY:🔵 [R32] 1H vs 2J
-LOCATION:SoFi Stadium\, Los Angeles (Inglewood) (US)
-DESCRIPTION:Match 84 · Round of 32\nSoFi Stadium, Los Angeles (Inglewood)\
- nGiờ VN: 03/07 02:00\nFIFA World Cup 2026
+SUMMARY:🔵 [R32] Spain vs Austria
+LOCATION:Los Angeles (Inglewood)   ## 1H / 2J\, Los Angeles (Inglewood)   #
+ # 1H / 2J
+DESCRIPTION:Match 84 · Round of 32\nLos Angeles (Inglewood)   ## 1H / 2J, 
+ Los Angeles (Inglewood)   ## 1H / 2J\nGiờ VN: 03/07 02:00\nFIFA World C
+ up 2026
 STATUS:CONFIRMED
 TRANSP:TRANSPARENT
 SEQUENCE:0
@@ -211,10 +229,10 @@ UID:wc2026-m83@wc2026.nh0znoisung.github
 DTSTAMP:20251205T120000Z
 DTSTART:20260702T230000Z
 DTEND:20260703T010000Z
-SUMMARY:🔵 [R32] 2K vs 2L
-LOCATION:BMO Field\, Toronto (CA)
-DESCRIPTION:Match 83 · Round of 32\nBMO Field, Toronto\nGiờ VN: 03/07 06
- :00\nFIFA World Cup 2026
+SUMMARY:🔵 [R32] Portugal vs Croatia
+LOCATION:Toronto   ## 2K / 2L\, Toronto   ## 2K / 2L
+DESCRIPTION:Match 83 · Round of 32\nToronto   ## 2K / 2L, Toronto   ## 2K 
+ / 2L\nGiờ VN: 03/07 06:00\nFIFA World Cup 2026
 STATUS:CONFIRMED
 TRANSP:TRANSPARENT
 SEQUENCE:0
@@ -229,10 +247,10 @@ UID:wc2026-m85@wc2026.nh0znoisung.github
 DTSTAMP:20251205T120000Z
 DTSTART:20260703T030000Z
 DTEND:20260703T050000Z
-SUMMARY:🔵 [R32] 1B vs 3E/F/G/I/J
-LOCATION:BC Place\, Vancouver (CA)
-DESCRIPTION:Match 85 · Round of 32\nBC Place, Vancouver\nGiờ VN: 03/07 1
- 0:00\nFIFA World Cup 2026
+SUMMARY:🔵 [R32] Switzerland vs Algeria
+LOCATION:Vancouver   ## 1B / 3E/F/G/I/J\, Vancouver   ## 1B / 3E/F/G/I/J
+DESCRIPTION:Match 85 · Round of 32\nVancouver   ## 1B / 3E/F/G/I/J, Vancou
+ ver   ## 1B / 3E/F/G/I/J\nGiờ VN: 03/07 10:00\nFIFA World Cup 2026
 STATUS:CONFIRMED
 TRANSP:TRANSPARENT
 SEQUENCE:0
@@ -247,10 +265,10 @@ UID:wc2026-m88@wc2026.nh0znoisung.github
 DTSTAMP:20251205T120000Z
 DTSTART:20260703T180000Z
 DTEND:20260703T200000Z
-SUMMARY:🔵 [R32] 2D vs 2G
-LOCATION:AT&T Stadium\, Dallas (Arlington) (US)
-DESCRIPTION:Match 88 · Round of 32\nAT&T Stadium, Dallas (Arlington)\nGi
- ờ VN: 04/07 01:00\nFIFA World Cup 2026
+SUMMARY:🔵 [R32] Australia vs Egypt
+LOCATION:Dallas (Arlington)   ## 2D / 2G\, Dallas (Arlington)   ## 2D / 2G
+DESCRIPTION:Match 88 · Round of 32\nDallas (Arlington)   ## 2D / 2G, Dalla
+ s (Arlington)   ## 2D / 2G\nGiờ VN: 04/07 01:00\nFIFA World Cup 2026
 STATUS:CONFIRMED
 TRANSP:TRANSPARENT
 SEQUENCE:0
@@ -265,10 +283,12 @@ UID:wc2026-m86@wc2026.nh0znoisung.github
 DTSTAMP:20251205T120000Z
 DTSTART:20260703T220000Z
 DTEND:20260704T000000Z
-SUMMARY:🔵 [R32] 1J vs 2H
-LOCATION:Hard Rock Stadium\, Miami (Miami Gardens) (US)
-DESCRIPTION:Match 86 · Round of 32\nHard Rock Stadium, Miami (Miami Garden
- s)\nGiờ VN: 04/07 05:00\nFIFA World Cup 2026
+SUMMARY:🔵 [R32] Argentina vs Cape Verde
+LOCATION:Miami (Miami Gardens)   ## 1J / 2H\, Miami (Miami Gardens)   ## 1J
+  / 2H
+DESCRIPTION:Match 86 · Round of 32\nMiami (Miami Gardens)   ## 1J / 2H, Mi
+ ami (Miami Gardens)   ## 1J / 2H\nGiờ VN: 04/07 05:00\nFIFA World Cup 2
+ 026
 STATUS:CONFIRMED
 TRANSP:TRANSPARENT
 SEQUENCE:0
@@ -283,10 +303,11 @@ UID:wc2026-m87@wc2026.nh0znoisung.github
 DTSTAMP:20251205T120000Z
 DTSTART:20260704T013000Z
 DTEND:20260704T033000Z
-SUMMARY:🔵 [R32] 1K vs 3D/E/I/J/L
-LOCATION:Arrowhead Stadium\, Kansas City (US)
-DESCRIPTION:Match 87 · Round of 32\nArrowhead Stadium, Kansas City\nGiờ 
- VN: 04/07 08:30\nFIFA World Cup 2026
+SUMMARY:🔵 [R32] Colombia vs Ghana
+LOCATION:Kansas City   ## 1K / 3D/E/I/J/L\, Kansas City   ## 1K / 3D/E/I/J/
+ L
+DESCRIPTION:Match 87 · Round of 32\nKansas City   ## 1K / 3D/E/I/J/L, Kans
+ as City   ## 1K / 3D/E/I/J/L\nGiờ VN: 04/07 08:30\nFIFA World Cup 2026
 STATUS:CONFIRMED
 TRANSP:TRANSPARENT
 SEQUENCE:0
