@@ -132,6 +132,7 @@ def load_stadiums(path):
 def parse_group_stage(path):
     matches, cur_group, cur_day = [], None, None
     for raw in path.read_text(encoding="utf-8").splitlines():
+        raw = raw.split("#", 1)[0]  # bỏ comment nội dòng của openfootball (## ghi chú)
         s = raw.strip()
         if s.startswith("▪"):
             if "Group" in s:
@@ -158,6 +159,7 @@ def parse_group_stage(path):
 def parse_knockout(path):
     matches, cur_round, cur_day = [], None, None
     for raw in path.read_text(encoding="utf-8").splitlines():
+        raw = raw.split("#", 1)[0]  # bỏ comment nội dòng của openfootball (## ghi chú)
         s = raw.strip()
         if s.startswith("▪"):
             cur_round, cur_day = s.replace("▪", "").strip(), None

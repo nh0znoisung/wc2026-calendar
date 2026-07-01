@@ -118,6 +118,9 @@ def build_schedule(data_dir):
     name_to_city = {v[0]: k for k, v in stadiums.items()}
     fixtures = (g.parse_group_stage(d / "cup.txt")
                 + g.parse_knockout(d / "cup_finals.txt"))
+    for f in fixtures:
+        nm = stadiums.get(f["venue"], (f["venue"], ""))[0]
+        f["venue_disp"] = f"{nm}, {f['venue']}" if nm and nm != f["venue"] else f["venue"]
     return fixtures, stadiums, name_to_city
 
 
@@ -139,7 +142,7 @@ def match_espn(fixture, espn, name_to_city):
 
 
 def render(fixture, live):
-    """Return (summary, description, score_for_desc)."""
+    """Return (summary, description).  Status icon: ⚪ sắp đá · 🔴 đang đá · ✅ đã đá."""
     stage = fixture["stage"]
     if stage == "group":
         prefix, suffix = "", f" — Group {fixture['group']}"
@@ -149,34 +152,30 @@ def render(fixture, live):
         prefix, suffix = f"[{rshort}] ", ""
         head = f"Match {fixture['num']} · {fixture['round']}"
 
+    venue = fixture.get("venue_disp") or fixture["venue"]
     home, away = fixture["home"], fixture["away"]
     score_line = ""
 
-    if live and live["state"] in ("in", "post"):
-        # map ESPN scores onto ESPN's own team names/order
-        named = [(n, s) for n, s, _ in live["order"] if s is not None]
-        if len(named) == 2:
-            (h_n, h_s), (a_n, a_s) = live["order"][0][:2], live["order"][1][:2]
-            home, away = live["order"][0][0], live["order"][1][0]
-            h_s = live["order"][0][1]; a_s = live["order"][1][1]
-            if live["state"] == "in":
-                clk = live["clock"] or live["detail"] or "live"
-                summary = f"🔴 {prefix}{home} {h_s}-{a_s} {away} ({clk}){suffix}"
-                score_line = f"\\nĐang đá: {home} {h_s}-{a_s} {away} — {clk}"
-            else:
-                summary = f"{prefix}{home} {h_s}-{a_s} {away}{suffix}"
-                tag = f" ({live['detail']})" if live.get("detail") and "FT" not in live["detail"] else ""
-                score_line = f"\\nKết quả: {home} {h_s}-{a_s} {away}{tag}"
-            desc = f"{head}\\n{fixture['venue']}\\nGiờ VN: {g.vn_str(fixture['utc'])}{score_line}\\nFIFA World Cup 2026"
-            return summary, desc
-
-    # no live: fall back to openfootball score if present, else scheduled
-    if fixture.get("score"):
-        summary = f"{prefix}{home} {fixture['score'].split(' ')[0]} {away}{suffix}"
+    live_scored = (live and live["state"] in ("in", "post")
+                   and len([1 for _, s, _ in live["order"] if s is not None]) == 2)
+    if live_scored:
+        home, away = live["order"][0][0], live["order"][1][0]
+        h_s, a_s = live["order"][0][1], live["order"][1][1]
+        if live["state"] == "in":
+            clk = live["clock"] or live["detail"] or "live"
+            summary = f"🔴 {prefix}{home} {h_s}-{a_s} {away} ({clk}){suffix}"
+            score_line = f"\\nĐang đá: {home} {h_s}-{a_s} {away} — {clk}"
+        else:
+            tag = f" ({live['detail']})" if live.get("detail") and "FT" not in live["detail"].upper() else ""
+            summary = f"✅ {prefix}{home} {h_s}-{a_s} {away}{suffix}"
+            score_line = f"\\nKết quả: {home} {h_s}-{a_s} {away}{tag}"
+    elif fixture.get("score"):
+        summary = f"✅ {prefix}{home} {fixture['score'].split(' ')[0]} {away}{suffix}"
         score_line = f"\\nKết quả: {home} {fixture['score_full']} {away}"
     else:
-        summary = f"{prefix}{home} vs {away}{suffix}"
-    desc = f"{head}\\n{fixture['venue']}\\nGiờ VN: {g.vn_str(fixture['utc'])}{score_line}\\nFIFA World Cup 2026"
+        summary = f"⚪ {prefix}{home} vs {away}{suffix}"
+
+    desc = f"{head}\\n{venue}\\nGiờ VN: {g.vn_str(fixture['utc'])}{score_line}\\nFIFA World Cup 2026"
     return summary, desc
 
 
@@ -198,7 +197,7 @@ def upsert(svc, cal_id, fixture, live, dry=False):
     body = {
         "id": event_id(fixture),
         "summary": summary,
-        "location": fixture["venue"],
+        "location": fixture.get("venue_disp") or fixture["venue"],
         "description": desc.replace("\\n", "\n"),
         "start": {"dateTime": start.strftime("%Y-%m-%dT%H:%M:%S"), "timeZone": "Etc/UTC"},
         "end": {"dateTime": (start + timedelta(hours=2)).strftime("%Y-%m-%dT%H:%M:%S"),
