@@ -69,10 +69,10 @@ UID:wc2026-m92@wc2026.nh0znoisung.github
 DTSTAMP:20251205T120000Z
 DTSTART:20260706T000000Z
 DTEND:20260706T020000Z
-SUMMARY:🟣 [R16] W79 vs W80
-LOCATION:Estadio Azteca\, Mexico City (MX)
-DESCRIPTION:Match 92 · Round of 16\nEstadio Azteca, Mexico City\nGiờ VN:
-  06/07 07:00\nFIFA World Cup 2026
+SUMMARY:🟣 [R16] Mexico vs W80
+LOCATION:Mexico City   ## W79\, Mexico City   ## W79
+DESCRIPTION:Match 92 · Round of 16\nMexico City   ## W79, Mexico City   ##
+  W79\nGiờ VN: 06/07 07:00\nFIFA World Cup 2026
 STATUS:CONFIRMED
 TRANSP:TRANSPARENT
 SEQUENCE:0
