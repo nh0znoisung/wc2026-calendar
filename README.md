@@ -1,154 +1,177 @@
-# World Cup 2026 → Google Calendar (tự cập nhật)
+# World Cup 2026 → Google Calendar
 
-Lịch đầy đủ **104 trận** FIFA World Cup 2026, sinh ra file `worldcup.ics`, host công khai
-trên GitHub. GitHub Actions **tự crawl lại mỗi sáng (05:00 giờ VN)** và cập nhật file —
-khi vòng knock-out có đội thật, các trận "2A / W74 / 3A/B/C/D/F…" sẽ tự được điền tên đội.
+A self-updating calendar for all **104 matches** of the FIFA World Cup 2026
+(11 Jun – 19 Jul 2026, USA / Canada / Mexico).
 
-- Giờ hiển thị: theo múi giờ máy bạn (file lưu chuẩn UTC; Google tự đổi sang giờ VN).
-- Mỗi trận có sẵn nhắc nhở **trước 60 phút**.
-- Nguồn dữ liệu: [openfootball/worldcup](https://github.com/openfootball/worldcup).
+It runs on a free GitHub Actions cron and offers **two modes** you can use
+independently:
+
+| Mode | What you get | Update speed | Setup |
+|------|--------------|--------------|-------|
+| **A. ICS subscribe** | One (or per-stage) `.ics` file hosted on GitHub; add it to Google Calendar by URL | Slow — Google re-polls a subscribed URL every few hours (Google-controlled) | zero auth |
+| **B. Live via Google Calendar API** *(recommended)* | Events written straight into a calendar you own: live scores + match clock, per-round colors, favorite-team highlight | ~5 min | one-time Google service account |
+
+Times are stored in UTC, so Google renders each match in **your local time zone**.
+Every event carries a **60-minute reminder**.
 
 ---
 
-## Cài đặt (làm 1 lần)
+## How it works
 
-### 1. Đẩy code lên repo
-Trong thư mục này:
+```
+openfootball/worldcup (schedule, venues, groups, knockout bracket)
+            │
+            │   ESPN scoreboard API (live state + score + clock)   ← Mode B only
+            ▼
+   GitHub Actions (cron */5)
+            ├── generate_ics.py  → worldcup*.ics   (committed to repo)      → Mode A
+            └── sync_gcal.py     → Google Calendar API (upsert events)      → Mode B
+```
+
+- **Schedule backbone:** [openfootball/worldcup](https://github.com/openfootball/worldcup)
+  — full fixtures with venues, groups and the knockout bracket. Kickoff times already
+  carry an explicit UTC offset, so conversion is exact (US/Canada DST vs Mexico no-DST).
+- **Live overlay (Mode B):** ESPN's public scoreboard endpoint
+  `site.api.espn.com/apis/site/v2/sports/soccer/fifa.world/scoreboard` — one GET,
+  no key. Matched to fixtures by kickoff time + venue, so it works even while the
+  knockout bracket still shows placeholders (ESPN team names win).
+- **Stable IDs:** every match maps to a deterministic event id, so updates
+  **overwrite in place** — filling in knockout teams and scores never creates duplicates.
+
+---
+
+## Mode A — ICS subscribe (zero auth)
+
+1. Repo must be **Public** (so Google can read the raw file).
+2. **Settings → Actions → General → Workflow permissions → Read and write** (lets the
+   bot commit the regenerated files).
+3. **Actions → Run workflow** once.
+4. Google Calendar (web) → next to **Other calendars** click **+ → From URL** → paste:
+
+   ```
+   https://raw.githubusercontent.com/nh0znoisung/wc2026-calendar/main/worldcup.ics
+   ```
+
+Match titles show a colored dot per stage (🟢 group · 🔵 R32 · 🟣 R16 · 🟠 QF ·
+🔴 SF · 🏆 final · 🥉 3rd place) and the score once played
+(`🟢 Germany 7-1 Curaçao — Group E`).
+
+**Per-stage files** (subscribe separately to give each stage its own calendar color):
+`worldcup-group.ics`, `-r32`, `-r16`, `-qf`, `-sf`, `-final`.
+
+> Subscribed calendars are read-only and Google refreshes them slowly (hours). If it
+> looks stuck, remove and re-add the URL with a throwaway query string (`...worldcup.ics?v=2`)
+> to force a fresh fetch. For near-instant updates, use Mode B instead.
+
+---
+
+## Mode B — Live sync via Google Calendar API (recommended)
+
+Writes events directly into a calendar you own, so it isn't gated by Google's slow
+polling. Adds **live score + clock** (`🔴 [R32] Brazil 2-1 Japan (80')`), a **status
+icon** (⚪ upcoming · 🔴 live · ✅ finished), **per-round colors**, and a
+**favorite-team highlight**. If the secrets below are absent, the workflow silently
+skips this step (Mode A keeps working).
+
+### One-time setup (~10 min)
+
+**A. Enable the API + create a service account**
+1. https://console.cloud.google.com → create/pick a project.
+2. **APIs & Services → Library** → search **Google Calendar API** → **Enable**.
+3. **APIs & Services → Credentials → Create credentials → Service account** → name it
+   (e.g. `wc2026-bot`) → Create → Done.
+4. Open the service account → **Keys → Add key → Create new key → JSON** → download it.
+   Copy the service-account **email** (`wc2026-bot@<project>.iam.gserviceaccount.com`).
+
+**B. Create a calendar and share it with the service account**
+5. Google Calendar (web) → **+ → Create new calendar** → name it `World Cup 2026 LIVE`.
+6. That calendar's **Settings → Share with specific people → Add people** → paste the
+   service-account email → permission **Make changes to events**.
+7. Same page → **Integrate calendar** → copy the **Calendar ID**
+   (`...@group.calendar.google.com`).
+
+**C. Add GitHub secrets**
+8. Repo → **Settings → Secrets and variables → Actions → New repository secret**:
+   - `GOOGLE_SA_KEY` = the entire contents of the JSON key file.
+   - `GCAL_ID` = the Calendar ID.
+
+**D. Run**
+9. **Actions → Run workflow**. The *Live sync to Google Calendar* step pushes all 104
+   events into `World Cup 2026 LIVE`. The cron then refreshes every 5 minutes.
+
+> Using Mode B? Unsubscribe the Mode A ICS calendars to avoid duplicate events.
+
+---
+
+## Configuration
+
+### Favorite teams (highlighted red)
+Matches involving a favorite team are colored **Tomato red**, overriding the round color.
+Two ways to set it — **no secret required**:
+- **Repo Variable (UI):** Settings → Secrets and variables → **Actions → Variables tab →
+  New variable** → name `FAVORITE_TEAMS`, value e.g. `Portugal, Argentina, France, Brazil`.
+- **Code:** edit `DEFAULT_FAVORITES` in `sync_gcal.py`.
+
+Default: `Portugal, Argentina, France`.
+
+### Round colors (Mode B)
+Google's API only exposes **11 preset event colors** (custom hex is UI-only, calendar-level).
+Within that limit the ramp goes "deeper round = hotter", skipping the harsh blue/yellow:
+
+| Stage | colorId | Color |
+|-------|---------|-------|
+| Group | 2 | Sage (light green) |
+| Round of 32 | 10 | Basil (dark green) |
+| Round of 16 | 3 | Grape (purple) |
+| Quarter-final | 4 | Flamingo (soft red) |
+| Semi-final | 6 | Tangerine (orange-red) |
+| Final | 11 | Tomato (red) |
+| Third place | 8 | Graphite (grey) |
+| Favorite team | 11 | Tomato (red) |
+
+Edit `STAGE_COLOR` in `sync_gcal.py` to change it.
+
+### Schedule / cron
+The workflow runs every 5 minutes (`*/5 * * * *`, UTC) — GitHub's minimum. Edit the
+`cron` line in `.github/workflows/update.yml` to change it. Runs are occasionally
+delayed by GitHub under load; the script only commits/patches when data actually changes.
+
+---
+
+## Local run
+
 ```bash
-git init -b main          # nếu chưa có
-git remote add origin https://github.com/nh0znoisung/wc2026-calendar.git
-git add .
-git commit -m "World Cup 2026 auto calendar"
-git push -u origin main
-```
-> Repo phải để **Public** thì Google mới đọc được link .ics.
-
-### 2. Bật quyền ghi cho Actions
-Trên GitHub: **Settings → Actions → General → Workflow permissions** →
-chọn **Read and write permissions** → Save.
-(Cần để job tự commit file `worldcup.ics` đã cập nhật.)
-
-### 3. Chạy thử workflow
-Tab **Actions** → chọn *Update World Cup 2026 calendar* → **Run workflow**.
-Sau ~1 phút, file `worldcup.ics` sẽ xuất hiện/được cập nhật trong repo.
-
-### 4. Subscribe vào Google Calendar
-Mở Google Calendar (bản web) → bên trái, cạnh **"Other calendars"** bấm **+** →
-**From URL** → dán link này:
-
-```
-https://raw.githubusercontent.com/nh0znoisung/wc2026-calendar/main/worldcup.ics
-```
-
-→ **Add calendar**. Lịch hiện thành **một calendar riêng có checkbox bật/tắt**.
-Không cần token hay đăng nhập gì thêm.
-
----
-
-## Tỷ số & màu sắc
-
-**Tỷ số:** sau khi trận đấu kết thúc và nguồn dữ liệu cập nhật, title tự đổi:
-`🟢 Mexico vs South Africa — Group A` → `🟢 Mexico 2-1 South Africa — Group A`
-(có cả `(aet)` / `(pen 4-2)` nếu đá hiệp phụ/luân lưu; chi tiết trong description).
-Không có tỷ số *live* — Google chỉ kéo lịch vài tiếng một lần.
-
-**Màu theo vòng — 2 lựa chọn:**
-
-1. *Đơn giản:* subscribe 1 file `worldcup.ics` — các vòng phân biệt bằng chấm màu
-   trên title: 🟢 vòng bảng · 🔵 vòng 32 · 🟣 vòng 16 · 🟠 tứ kết · 🔴 bán kết · 🥉 hạng 3 · 🏆 CK.
-2. *Màu thật:* subscribe từng file theo vòng (mỗi cái là 1 calendar riêng, tự gán màu
-   trong Google: bấm ⋮ cạnh tên calendar → chọn màu):
-
-```
-https://raw.githubusercontent.com/nh0znoisung/wc2026-calendar/main/worldcup-group.ics
-https://raw.githubusercontent.com/nh0znoisung/wc2026-calendar/main/worldcup-r32.ics
-https://raw.githubusercontent.com/nh0znoisung/wc2026-calendar/main/worldcup-r16.ics
-https://raw.githubusercontent.com/nh0znoisung/wc2026-calendar/main/worldcup-qf.ics
-https://raw.githubusercontent.com/nh0znoisung/wc2026-calendar/main/worldcup-sf.ics
-https://raw.githubusercontent.com/nh0znoisung/wc2026-calendar/main/worldcup-final.ics
-```
-
-> Chọn 1 trong 2 — subscribe cả `worldcup.ics` lẫn các file vòng sẽ bị trùng event.
-
----
-
-## Cách nó tự cập nhật
-
-- **GitHub Actions** (file `.github/workflows/update.yml`) chạy **mỗi 5 phút** — clone dữ
-  liệu mới, sinh lại các file .ics, commit nếu có thay đổi. Chạy trên cloud GitHub nên
-  **máy bạn tắt vẫn chạy**.
-- **Google Calendar** tự đọc lại link subscribe định kỳ (~mỗi 8–24h, do Google quyết định,
-  không chỉnh tần suất được). Vì mỗi trận có UID cố định nên cập nhật **đè tại chỗ**, không trùng.
-
-Muốn đổi giờ chạy: sửa dòng `cron` trong `update.yml` (theo giờ UTC).
-
----
-
-## Chạy tay ở máy (tùy chọn)
-```bash
-pip install icalendar
+pip install icalendar requests google-api-python-client google-auth
 git clone --depth 1 https://github.com/openfootball/worldcup.git _data
+
+# Mode A — generate the .ics files
 python generate_ics.py --data-dir "$(echo _data/2026--*)" --out-dir .
+
+# Mode B — preview what would be written to Google (no writes)
+python sync_gcal.py --data-dir "$(echo _data/2026--*)" --dry-run
 ```
+
+---
 
 ## Files
-| File | Vai trò |
-|---|---|
-| `generate_ics.py` | Parse dữ liệu → sinh các file .ics |
-| `worldcup.ics` | Lịch đầy đủ 104 trận (subscribe 1 file) |
-| `worldcup-group/r32/r16/qf/sf/final.ics` | Lịch tách theo vòng (để gán màu riêng) |
-| `sync_gcal.py` | Live sync: ESPN → Google Calendar API |
-| `.github/workflows/update.yml` | Cron mỗi 5 phút (ICS + live sync) |
+
+| File | Role |
+|------|------|
+| `generate_ics.py` | Parse the schedule → generate `worldcup*.ics` (Mode A) |
+| `sync_gcal.py` | Merge schedule + ESPN live → upsert to Google Calendar (Mode B) |
+| `worldcup.ics` | Full 104-match calendar (subscribe one file) |
+| `worldcup-{group,r32,r16,qf,sf,final}.ics` | Per-stage calendars (per-stage color) |
+| `.github/workflows/update.yml` | Cron every 5 min: regenerate ICS + live sync |
 
 ---
 
-# Chế độ LIVE (Google Calendar API) — tùy chọn nâng cao
+## Limitations & notes
 
-Khác với subscribe ICS (Google kéo chậm vài tiếng), chế độ này **ghi thẳng event
-vào lịch qua API** nên cập nhật gần như tức thì, hiện cả **tỷ số đang đá + phút**
-(`🔴 Brazil 2-1 Japan (80')`) và **tô màu riêng từng vòng**. Nguồn live: ESPN.
-
-Nếu KHÔNG cấu hình gì, workflow tự bỏ qua bước này — phần ICS vẫn chạy bình thường.
-
-### Setup 1 lần (~10 phút)
-
-**A. Bật Google Calendar API + tạo service account**
-1. Vào https://console.cloud.google.com → tạo 1 project (tên gì cũng được).
-2. **APIs & Services → Library** → tìm **Google Calendar API** → **Enable**.
-3. **APIs & Services → Credentials → Create credentials → Service account** →
-   đặt tên (vd `wc2026-bot`) → Create → Done.
-4. Bấm vào service account vừa tạo → tab **Keys → Add key → Create new key →
-   JSON** → tải file `.json` về. **Copy email** của service account (dạng
-   `wc2026-bot@<project>.iam.gserviceaccount.com`).
-
-**B. Tạo lịch riêng + share cho service account**
-5. Google Calendar (web) → bên trái **+ → Create new calendar** → đặt tên
-   `World Cup 2026 LIVE` → Create.
-6. Vào **Settings** của lịch đó → **Share with specific people** → **Add people**
-   → dán *email service account* ở bước 4 → quyền **Make changes to events** → Send.
-7. Cũng trong Settings, kéo xuống mục **Integrate calendar** → copy **Calendar ID**
-   (dạng `....@group.calendar.google.com`).
-
-**C. Nạp secret vào GitHub**
-8. Repo → **Settings → Secrets and variables → Actions → New repository secret**:
-   - `GOOGLE_SA_KEY` = **toàn bộ nội dung** file JSON ở bước 4 (mở file, copy hết, dán vào).
-   - `GCAL_ID` = Calendar ID ở bước 7.
-
-**D. Chạy thử**
-9. Tab **Actions → Run workflow**. Nếu có secret, bước *Live sync to Google Calendar*
-   sẽ chạy và đẩy 104 event vào lịch `World Cup 2026 LIVE`. Mở Google Calendar là thấy.
-
-Từ đó cron chạy mỗi 5 phút: lúc có trận đang đá, tỷ số + phút tự cập nhật trong ~5–10 phút.
-Lịch này là lịch *của bạn* (không phải subscribe) nên không dính độ trễ kéo của Google.
-
-### Màu theo vòng (tự động, mỗi event 1 màu)
-🟢 vòng bảng · 🔵 R32 · 🟣 R16 · 🟠 tứ kết · 🔴 bán kết · 🥇 CK · ⬛ tranh hạng 3.
-
-> Mẹo: nếu đã bật chế độ LIVE thì **tắt/không subscribe** các lịch ICS để khỏi trùng event.
-
-### Chạy thử ở máy (không đụng Google)
-```bash
-pip install requests google-api-python-client google-auth icalendar
-git clone --depth 1 https://github.com/openfootball/worldcup.git _data
-python sync_gcal.py --data-dir "$(echo _data/2026--*)" --dry-run   # chỉ in ra, không ghi
-```
+- **Mode A latency** is set by Google's subscribed-calendar polling (hours), not by this
+  repo. The files themselves are refreshed every 5 minutes.
+- **Live-score latency (Mode B)** = ESPN publishing (usually seconds–minutes) + the 5-min
+  cron. ESPN and openfootball are community/undocumented sources with no SLA; the code
+  degrades gracefully (falls back to schedule-only if a source is unavailable).
+- **Event colors** via the Google Calendar API are limited to 11 presets.
+- Data sources: [openfootball/worldcup](https://github.com/openfootball/worldcup) (schedule),
+  ESPN public scoreboard (live). This project is unofficial and not affiliated with FIFA.

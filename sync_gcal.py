@@ -38,16 +38,24 @@ import generate_ics as g  # reuse the schedule parser + helpers
 ESPN_URL = ("https://site.api.espn.com/apis/site/v2/sports/soccer/"
             "fifa.world/scoreboard?dates=20260611-20260719&limit=1000")
 
-# stage -> Google Calendar event colorId (1..11)
+# stage -> Google Calendar event colorId (1..11). Dải "càng sâu càng nóng",
+# né hẳn xanh dương (Peacock/Blueberry) và vàng (Banana) cho nền trắng.
 STAGE_COLOR = {
-    "group": "10",  # Basil  (green)
-    "r32":   "7",   # Peacock(blue)
-    "r16":   "3",   # Grape  (purple)
-    "qf":    "6",   # Tangerine (orange)
-    "sf":    "11",  # Tomato (red)
-    "final": "5",   # Banana (gold)
+    "group": "2",   # Sage      - xanh lá nhạt (nhẹ)
+    "r32":   "10",  # Basil     - xanh lá đậm
+    "r16":   "3",   # Grape     - tím
+    "qf":    "4",   # Flamingo  - đỏ hồng (ấm dần)
+    "sf":    "6",   # Tangerine - cam-đỏ gắt (đậm)
+    "final": "11",  # Tomato    - đỏ gắt (gắt nhất)
 }
-THIRD_PLACE_COLOR = "8"  # Graphite
+THIRD_PLACE_COLOR = "8"   # Graphite - xám (nhẹ nhẹ)
+FAV_COLOR = "11"          # Tomato   - đội yêu thích luôn đỏ (đè màu vòng)
+
+# ---- CONFIG (không phải secret) --------------------------------------------
+# Đội bạn follow -> trận có 1 trong các đội này sẽ tô ĐỎ, kể cả vòng bảng.
+# Sửa ở đây, HOẶC đặt GitHub repo Variable tên FAVORITE_TEAMS (Settings ->
+# Secrets and variables -> Actions -> tab Variables), vd: "Portugal, Argentina, France".
+DEFAULT_FAVORITES = "Portugal, Argentina, France"
 
 NAME_ALIASES = {
     "turkiye": "turkey", "korearepublic": "southkorea", "irkiran": "iran",
@@ -176,7 +184,7 @@ def render(fixture, live):
         summary = f"⚪ {prefix}{home} vs {away}{suffix}"
 
     desc = f"{head}\\n{venue}\\nGiờ VN: {g.vn_str(fixture['utc'])}{score_line}\\nFIFA World Cup 2026"
-    return summary, desc
+    return summary, desc, home, away
 
 
 def gcal_service():
@@ -189,10 +197,14 @@ def gcal_service():
     return build("calendar", "v3", credentials=creds, cache_discovery=False)
 
 
-def upsert(svc, cal_id, fixture, live, dry=False):
-    summary, desc = render(fixture, live)
-    color = (THIRD_PLACE_COLOR if fixture.get("round") == "Match for third place"
-             else STAGE_COLOR[fixture["stage"]])
+def upsert(svc, cal_id, fixture, live, favs, dry=False):
+    summary, desc, home, away = render(fixture, live)
+    if norm(home) in favs or norm(away) in favs:
+        color = FAV_COLOR
+    elif fixture.get("round") == "Match for third place":
+        color = THIRD_PLACE_COLOR
+    else:
+        color = STAGE_COLOR[fixture["stage"]]
     start = fixture["utc"]
     body = {
         "id": event_id(fixture),
@@ -235,16 +247,18 @@ def main():
                     help="don't touch Google; just print what would be written")
     args = ap.parse_args()
 
+    favs = {norm(t) for t in os.environ.get("FAVORITE_TEAMS", DEFAULT_FAVORITES).split(",")
+            if t.strip()}
     fixtures, stadiums, name_to_city = build_schedule(args.data_dir)
     espn = fetch_espn()
-    print(f"schedule fixtures: {len(fixtures)} | ESPN events: {len(espn)}")
+    print(f"schedule fixtures: {len(fixtures)} | ESPN events: {len(espn)} | favorites: {sorted(favs)}")
 
     svc = None if args.dry_run else gcal_service()
     cal_id = os.environ.get("GCAL_ID", "DRY")
     stats = {}
     for fx in fixtures:
         live = match_espn(fx, espn, name_to_city)
-        res = upsert(svc, cal_id, fx, live, dry=args.dry_run)
+        res = upsert(svc, cal_id, fx, live, favs, dry=args.dry_run)
         stats[res] = stats.get(res, 0) + 1
     print("done:", stats)
 
