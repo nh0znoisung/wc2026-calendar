@@ -86,9 +86,9 @@ Within that limit the ramp goes "deeper round = hotter", skipping harsh blue/yel
 
 | Stage | Color | | Stage | Color |
 |-------|-------|-|-------|-------|
-| Group | Sage (light green) | | Semi-final | Tangerine (orange-red) |
-| Round of 32 | Basil (dark green) | | Final | Tomato (red) |
-| Round of 16 | Grape (purple) | | Third place | Graphite (grey) |
+| Group | Graphite (grey, neutral) | | Semi-final | Tangerine (orange-red) |
+| Round of 32 | Sage (green) | | Final | Tomato (red) |
+| Round of 16 | Grape (purple) | | Third place | Basil (dark green) |
 | Quarter-final | Flamingo (soft red) | | Favorite team | Tomato (red) |
 
 Edit `STAGE_COLOR` in `sync_gcal.py` to change it.

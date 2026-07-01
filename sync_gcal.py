@@ -41,14 +41,14 @@ ESPN_URL = ("https://site.api.espn.com/apis/site/v2/sports/soccer/"
 # stage -> Google Calendar event colorId (1..11). Dải "càng sâu càng nóng",
 # né hẳn xanh dương (Peacock/Blueberry) và vàng (Banana) cho nền trắng.
 STAGE_COLOR = {
-    "group": "2",   # Sage      - xanh lá nhạt (nhẹ)
-    "r32":   "10",  # Basil     - xanh lá đậm
+    "group": "8",   # Graphite  - xám trung tính (72 trận, nền dịu)
+    "r32":   "2",   # Sage      - xanh lá
     "r16":   "3",   # Grape     - tím
     "qf":    "4",   # Flamingo  - đỏ hồng (ấm dần)
     "sf":    "6",   # Tangerine - cam-đỏ gắt (đậm)
     "final": "11",  # Tomato    - đỏ gắt (gắt nhất)
 }
-THIRD_PLACE_COLOR = "8"   # Graphite - xám (nhẹ nhẹ)
+THIRD_PLACE_COLOR = "10"  # Basil - xanh lá đậm (1 trận, tách biệt)
 FAV_COLOR = "11"          # Tomato   - đội yêu thích luôn đỏ (đè màu vòng)
 
 # ---- CONFIG (không phải secret) --------------------------------------------
