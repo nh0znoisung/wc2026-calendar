@@ -74,7 +74,7 @@ https://raw.githubusercontent.com/nh0znoisung/wc2026-calendar/main/worldcup-fina
 
 ## Cách nó tự cập nhật
 
-- **GitHub Actions** (file `.github/workflows/update.yml`) chạy **mỗi giờ** — clone dữ
+- **GitHub Actions** (file `.github/workflows/update.yml`) chạy **mỗi 5 phút** — clone dữ
   liệu mới, sinh lại các file .ics, commit nếu có thay đổi. Chạy trên cloud GitHub nên
   **máy bạn tắt vẫn chạy**.
 - **Google Calendar** tự đọc lại link subscribe định kỳ (~mỗi 8–24h, do Google quyết định,
@@ -97,4 +97,58 @@ python generate_ics.py --data-dir "$(echo _data/2026--*)" --out-dir .
 | `generate_ics.py` | Parse dữ liệu → sinh các file .ics |
 | `worldcup.ics` | Lịch đầy đủ 104 trận (subscribe 1 file) |
 | `worldcup-group/r32/r16/qf/sf/final.ics` | Lịch tách theo vòng (để gán màu riêng) |
-| `.github/workflows/update.yml` | Cron tự cập nhật mỗi giờ |
+| `sync_gcal.py` | Live sync: ESPN → Google Calendar API |
+| `.github/workflows/update.yml` | Cron mỗi 5 phút (ICS + live sync) |
+
+---
+
+# Chế độ LIVE (Google Calendar API) — tùy chọn nâng cao
+
+Khác với subscribe ICS (Google kéo chậm vài tiếng), chế độ này **ghi thẳng event
+vào lịch qua API** nên cập nhật gần như tức thì, hiện cả **tỷ số đang đá + phút**
+(`🔴 Brazil 2-1 Japan (80')`) và **tô màu riêng từng vòng**. Nguồn live: ESPN.
+
+Nếu KHÔNG cấu hình gì, workflow tự bỏ qua bước này — phần ICS vẫn chạy bình thường.
+
+### Setup 1 lần (~10 phút)
+
+**A. Bật Google Calendar API + tạo service account**
+1. Vào https://console.cloud.google.com → tạo 1 project (tên gì cũng được).
+2. **APIs & Services → Library** → tìm **Google Calendar API** → **Enable**.
+3. **APIs & Services → Credentials → Create credentials → Service account** →
+   đặt tên (vd `wc2026-bot`) → Create → Done.
+4. Bấm vào service account vừa tạo → tab **Keys → Add key → Create new key →
+   JSON** → tải file `.json` về. **Copy email** của service account (dạng
+   `wc2026-bot@<project>.iam.gserviceaccount.com`).
+
+**B. Tạo lịch riêng + share cho service account**
+5. Google Calendar (web) → bên trái **+ → Create new calendar** → đặt tên
+   `World Cup 2026 LIVE` → Create.
+6. Vào **Settings** của lịch đó → **Share with specific people** → **Add people**
+   → dán *email service account* ở bước 4 → quyền **Make changes to events** → Send.
+7. Cũng trong Settings, kéo xuống mục **Integrate calendar** → copy **Calendar ID**
+   (dạng `....@group.calendar.google.com`).
+
+**C. Nạp secret vào GitHub**
+8. Repo → **Settings → Secrets and variables → Actions → New repository secret**:
+   - `GOOGLE_SA_KEY` = **toàn bộ nội dung** file JSON ở bước 4 (mở file, copy hết, dán vào).
+   - `GCAL_ID` = Calendar ID ở bước 7.
+
+**D. Chạy thử**
+9. Tab **Actions → Run workflow**. Nếu có secret, bước *Live sync to Google Calendar*
+   sẽ chạy và đẩy 104 event vào lịch `World Cup 2026 LIVE`. Mở Google Calendar là thấy.
+
+Từ đó cron chạy mỗi 5 phút: lúc có trận đang đá, tỷ số + phút tự cập nhật trong ~5–10 phút.
+Lịch này là lịch *của bạn* (không phải subscribe) nên không dính độ trễ kéo của Google.
+
+### Màu theo vòng (tự động, mỗi event 1 màu)
+🟢 vòng bảng · 🔵 R32 · 🟣 R16 · 🟠 tứ kết · 🔴 bán kết · 🥇 CK · ⬛ tranh hạng 3.
+
+> Mẹo: nếu đã bật chế độ LIVE thì **tắt/không subscribe** các lịch ICS để khỏi trùng event.
+
+### Chạy thử ở máy (không đụng Google)
+```bash
+pip install requests google-api-python-client google-auth icalendar
+git clone --depth 1 https://github.com/openfootball/worldcup.git _data
+python sync_gcal.py --data-dir "$(echo _data/2026--*)" --dry-run   # chỉ in ra, không ghi
+```

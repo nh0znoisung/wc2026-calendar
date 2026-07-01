@@ -266,8 +266,8 @@ def write_calendar(path, name, color, matches, stadiums):
         fold(f"X-WR-CALNAME:{esc(name)}"),
         f"COLOR:{color}",
         "X-WR-TIMEZONE:Asia/Ho_Chi_Minh",
-        "REFRESH-INTERVAL;VALUE=DURATION:PT6H",
-        "X-PUBLISHED-TTL:PT6H",
+        "REFRESH-INTERVAL;VALUE=DURATION:PT15M",
+        "X-PUBLISHED-TTL:PT15M",
     ]
     for m in matches:
         out += build_event(m, stadiums)

@@ -2,9 +2,9 @@ name: Update World Cup 2026 calendar
 
 on:
   schedule:
-    # Mỗi giờ, đầu giờ (theo UTC). GitHub cron có thể trễ vài phút và đôi khi
-    # bỏ nhịp khi hệ thống bận — bình thường. Script chỉ commit khi dữ liệu đổi.
-    - cron: "0 * * * *"
+    # Mỗi 5 phút (mức nhỏ nhất GitHub cho phép). Phục vụ live sync sang Google
+    # Calendar API. GitHub cron có thể trễ vài phút khi hệ thống bận — bình thường.
+    - cron: "*/5 * * * *"
   workflow_dispatch: {}   # cho phép bấm chạy tay trong tab Actions
   push:
     branches: [main]       # chạy lại mỗi khi sửa code
@@ -19,6 +19,9 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      GCAL_ID: ${{ secrets.GCAL_ID }}
+      GOOGLE_SA_KEY: ${{ secrets.GOOGLE_SA_KEY }}
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
@@ -66,3 +69,11 @@ jobs:
             git commit -m "Update worldcup.ics ($(date -u +'%Y-%m-%d %H:%MZ'))"
             git push
           fi
+
+      # ---- Live sync to Google Calendar (chỉ chạy nếu đã cấu hình secrets) ----
+      - name: Live sync to Google Calendar
+        if: ${{ env.GCAL_ID != '' && env.GOOGLE_SA_KEY != '' }}
+        run: |
+          pip install requests google-api-python-client google-auth
+          DATA=$(echo _data/2026--*)
+          python sync_gcal.py --data-dir "$DATA"

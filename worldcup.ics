@@ -6,17 +6,17 @@ METHOD:PUBLISH
 X-WR-CALNAME:FIFA World Cup 2026
 COLOR:green
 X-WR-TIMEZONE:Asia/Ho_Chi_Minh
-REFRESH-INTERVAL;VALUE=DURATION:PT6H
-X-PUBLISHED-TTL:PT6H
+REFRESH-INTERVAL;VALUE=DURATION:PT15M
+X-PUBLISHED-TTL:PT15M
 BEGIN:VEVENT
 UID:wc2026-gA-mexico-vs-southafrica@wc2026.nh0znoisung.github
 DTSTAMP:20251205T120000Z
 DTSTART:20260611T190000Z
 DTEND:20260611T210000Z
-SUMMARY:🟢 Mexico vs South Africa — Group A
+SUMMARY:🟢 Mexico 2-0 South Africa — Group A
 LOCATION:Estadio Azteca\, Mexico City (MX)
-DESCRIPTION:Group A\nEstadio Azteca, Mexico City\nGiờ VN: 12/06 02:00\nFI
- FA World Cup 2026
+DESCRIPTION:Group A\nEstadio Azteca, Mexico City\nGiờ VN: 12/06 02:00\nK
+ ết quả: Mexico 2-0 (1-0) South Africa\nFIFA World Cup 2026
 STATUS:CONFIRMED
 TRANSP:TRANSPARENT
 SEQUENCE:0
@@ -31,10 +31,11 @@ UID:wc2026-gA-southkorea-vs-czechrepublic@wc2026.nh0znoisung.github
 DTSTAMP:20251205T120000Z
 DTSTART:20260612T020000Z
 DTEND:20260612T040000Z
-SUMMARY:🟢 South Korea vs Czech Republic — Group A
+SUMMARY:🟢 South Korea 2-1 Czech Republic — Group A
 LOCATION:Estadio Akron\, Guadalajara (Zapopan) (MX)
 DESCRIPTION:Group A\nEstadio Akron, Guadalajara (Zapopan)\nGiờ VN: 12/06 
- 09:00\nFIFA World Cup 2026
+ 09:00\nKết quả: South Korea 2-1 (0-0) Czech Republic\nFIFA World Cup 
+ 2026
 STATUS:CONFIRMED
 TRANSP:TRANSPARENT
 SEQUENCE:0
@@ -49,10 +50,10 @@ UID:wc2026-gB-canada-vs-bosniaherzegovina@wc2026.nh0znoisung.github
 DTSTAMP:20251205T120000Z
 DTSTART:20260612T190000Z
 DTEND:20260612T210000Z
-SUMMARY:🟢 Canada vs Bosnia & Herzegovina — Group B
+SUMMARY:🟢 Canada 1-1 Bosnia & Herzegovina — Group B
 LOCATION:BMO Field\, Toronto (CA)
-DESCRIPTION:Group B\nBMO Field, Toronto\nGiờ VN: 13/06 02:00\nFIFA World 
- Cup 2026
+DESCRIPTION:Group B\nBMO Field, Toronto\nGiờ VN: 13/06 02:00\nKết qu
+ ả: Canada 1-1 (0-1) Bosnia & Herzegovina\nFIFA World Cup 2026
 STATUS:CONFIRMED
 TRANSP:TRANSPARENT
 SEQUENCE:0
@@ -67,10 +68,10 @@ UID:wc2026-gD-usa-vs-paraguay@wc2026.nh0znoisung.github
 DTSTAMP:20251205T120000Z
 DTSTART:20260613T010000Z
 DTEND:20260613T030000Z
-SUMMARY:🟢 USA vs Paraguay — Group D
+SUMMARY:🟢 USA 4-1 Paraguay — Group D
 LOCATION:SoFi Stadium\, Los Angeles (Inglewood) (US)
 DESCRIPTION:Group D\nSoFi Stadium, Los Angeles (Inglewood)\nGiờ VN: 13/06
-  08:00\nFIFA World Cup 2026
+  08:00\nKết quả: USA 4-1 (3-0) Paraguay\nFIFA World Cup 2026
 STATUS:CONFIRMED
 TRANSP:TRANSPARENT
 SEQUENCE:0
@@ -85,10 +86,11 @@ UID:wc2026-gB-qatar-vs-switzerland@wc2026.nh0znoisung.github
 DTSTAMP:20251205T120000Z
 DTSTART:20260613T190000Z
 DTEND:20260613T210000Z
-SUMMARY:🟢 Qatar vs Switzerland — Group B
+SUMMARY:🟢 Qatar 1-1 Switzerland — Group B
 LOCATION:Levi's Stadium\, San Francisco Bay Area (Santa Clara) (US)
 DESCRIPTION:Group B\nLevi's Stadium, San Francisco Bay Area (Santa Clara)\n
- Giờ VN: 14/06 02:00\nFIFA World Cup 2026
+ Giờ VN: 14/06 02:00\nKết quả: Qatar 1-1 (0-1) Switzerland\nFIFA Wor
+ ld Cup 2026
 STATUS:CONFIRMED
 TRANSP:TRANSPARENT
 SEQUENCE:0
@@ -103,10 +105,11 @@ UID:wc2026-gC-brazil-vs-morocco@wc2026.nh0znoisung.github
 DTSTAMP:20251205T120000Z
 DTSTART:20260613T220000Z
 DTEND:20260614T000000Z
-SUMMARY:🟢 Brazil vs Morocco — Group C
+SUMMARY:🟢 Brazil 1-1 Morocco — Group C
 LOCATION:MetLife Stadium\, New York/New Jersey (East Rutherford) (US)
 DESCRIPTION:Group C\nMetLife Stadium, New York/New Jersey (East Rutherford)
- \nGiờ VN: 14/06 05:00\nFIFA World Cup 2026
+ \nGiờ VN: 14/06 05:00\nKết quả: Brazil 1-1 (1-1) Morocco\nFIFA Worl
+ d Cup 2026
 STATUS:CONFIRMED
 TRANSP:TRANSPARENT
 SEQUENCE:0
@@ -121,10 +124,10 @@ UID:wc2026-gC-haiti-vs-scotland@wc2026.nh0znoisung.github
 DTSTAMP:20251205T120000Z
 DTSTART:20260614T010000Z
 DTEND:20260614T030000Z
-SUMMARY:🟢 Haiti vs Scotland — Group C
+SUMMARY:🟢 Haiti 0-1 Scotland — Group C
 LOCATION:Gillette Stadium\, Boston (Foxborough) (US)
 DESCRIPTION:Group C\nGillette Stadium, Boston (Foxborough)\nGiờ VN: 14/06
-  08:00\nFIFA World Cup 2026
+  08:00\nKết quả: Haiti 0-1 (0-1) Scotland\nFIFA World Cup 2026
 STATUS:CONFIRMED
 TRANSP:TRANSPARENT
 SEQUENCE:0
@@ -139,10 +142,10 @@ UID:wc2026-gD-australia-vs-turkey@wc2026.nh0znoisung.github
 DTSTAMP:20251205T120000Z
 DTSTART:20260614T040000Z
 DTEND:20260614T060000Z
-SUMMARY:🟢 Australia vs Turkey — Group D
+SUMMARY:🟢 Australia 2-0 Turkey — Group D
 LOCATION:BC Place\, Vancouver (CA)
-DESCRIPTION:Group D\nBC Place, Vancouver\nGiờ VN: 14/06 11:00\nFIFA World
-  Cup 2026
+DESCRIPTION:Group D\nBC Place, Vancouver\nGiờ VN: 14/06 11:00\nKết qu
+ ả: Australia 2-0 (1-0) Turkey\nFIFA World Cup 2026
 STATUS:CONFIRMED
 TRANSP:TRANSPARENT
 SEQUENCE:0
@@ -157,10 +160,10 @@ UID:wc2026-gE-germany-vs-curacao@wc2026.nh0znoisung.github
 DTSTAMP:20251205T120000Z
 DTSTART:20260614T170000Z
 DTEND:20260614T190000Z
-SUMMARY:🟢 Germany vs Curaçao — Group E
+SUMMARY:🟢 Germany 7-1 Curaçao — Group E
 LOCATION:NRG Stadium\, Houston (US)
-DESCRIPTION:Group E\nNRG Stadium, Houston\nGiờ VN: 15/06 00:00\nFIFA Worl
- d Cup 2026
+DESCRIPTION:Group E\nNRG Stadium, Houston\nGiờ VN: 15/06 00:00\nKết qu
+ ả: Germany 7-1 (3-1) Curaçao\nFIFA World Cup 2026
 STATUS:CONFIRMED
 TRANSP:TRANSPARENT
 SEQUENCE:0
@@ -175,10 +178,10 @@ UID:wc2026-gF-netherlands-vs-japan@wc2026.nh0znoisung.github
 DTSTAMP:20251205T120000Z
 DTSTART:20260614T200000Z
 DTEND:20260614T220000Z
-SUMMARY:🟢 Netherlands vs Japan — Group F
+SUMMARY:🟢 Netherlands 2-2 Japan — Group F
 LOCATION:AT&T Stadium\, Dallas (Arlington) (US)
 DESCRIPTION:Group F\nAT&T Stadium, Dallas (Arlington)\nGiờ VN: 15/06 03:0
- 0\nFIFA World Cup 2026
+ 0\nKết quả: Netherlands 2-2 (0-0) Japan\nFIFA World Cup 2026
 STATUS:CONFIRMED
 TRANSP:TRANSPARENT
 SEQUENCE:0
@@ -193,10 +196,10 @@ UID:wc2026-gE-ivorycoast-vs-ecuador@wc2026.nh0znoisung.github
 DTSTAMP:20251205T120000Z
 DTSTART:20260614T230000Z
 DTEND:20260615T010000Z
-SUMMARY:🟢 Ivory Coast vs Ecuador — Group E
+SUMMARY:🟢 Ivory Coast 1-0 Ecuador — Group E
 LOCATION:Lincoln Financial Field\, Philadelphia (US)
 DESCRIPTION:Group E\nLincoln Financial Field, Philadelphia\nGiờ VN: 15/06
-  06:00\nFIFA World Cup 2026
+  06:00\nKết quả: Ivory Coast 1-0 (0-0) Ecuador\nFIFA World Cup 2026
 STATUS:CONFIRMED
 TRANSP:TRANSPARENT
 SEQUENCE:0
@@ -211,10 +214,10 @@ UID:wc2026-gF-sweden-vs-tunisia@wc2026.nh0znoisung.github
 DTSTAMP:20251205T120000Z
 DTSTART:20260615T020000Z
 DTEND:20260615T040000Z
-SUMMARY:🟢 Sweden vs Tunisia — Group F
+SUMMARY:🟢 Sweden 5-1 Tunisia — Group F
 LOCATION:Estadio BBVA\, Monterrey (Guadalupe) (MX)
 DESCRIPTION:Group F\nEstadio BBVA, Monterrey (Guadalupe)\nGiờ VN: 15/06 0
- 9:00\nFIFA World Cup 2026
+ 9:00\nKết quả: Sweden 5-1 (2-1) Tunisia\nFIFA World Cup 2026
 STATUS:CONFIRMED
 TRANSP:TRANSPARENT
 SEQUENCE:0
@@ -229,10 +232,10 @@ UID:wc2026-gH-spain-vs-capeverde@wc2026.nh0znoisung.github
 DTSTAMP:20251205T120000Z
 DTSTART:20260615T160000Z
 DTEND:20260615T180000Z
-SUMMARY:🟢 Spain vs Cape Verde — Group H
+SUMMARY:🟢 Spain 0-0 Cape Verde — Group H
 LOCATION:Mercedes-Benz Stadium\, Atlanta (US)
 DESCRIPTION:Group H\nMercedes-Benz Stadium, Atlanta\nGiờ VN: 15/06 23:00\
- nFIFA World Cup 2026
+ nKết quả: Spain 0-0 (0-0) Cape Verde\nFIFA World Cup 2026
 STATUS:CONFIRMED
 TRANSP:TRANSPARENT
 SEQUENCE:0
@@ -247,10 +250,10 @@ UID:wc2026-gG-belgium-vs-egypt@wc2026.nh0znoisung.github
 DTSTAMP:20251205T120000Z
 DTSTART:20260615T190000Z
 DTEND:20260615T210000Z
-SUMMARY:🟢 Belgium vs Egypt — Group G
+SUMMARY:🟢 Belgium 1-1 Egypt — Group G
 LOCATION:Lumen Field\, Seattle (US)
-DESCRIPTION:Group G\nLumen Field, Seattle\nGiờ VN: 16/06 02:00\nFIFA Worl
- d Cup 2026
+DESCRIPTION:Group G\nLumen Field, Seattle\nGiờ VN: 16/06 02:00\nKết qu
+ ả: Belgium 1-1 (0-1) Egypt\nFIFA World Cup 2026
 STATUS:CONFIRMED
 TRANSP:TRANSPARENT
 SEQUENCE:0
@@ -265,10 +268,11 @@ UID:wc2026-gH-saudiarabia-vs-uruguay@wc2026.nh0znoisung.github
 DTSTAMP:20251205T120000Z
 DTSTART:20260615T220000Z
 DTEND:20260616T000000Z
-SUMMARY:🟢 Saudi Arabia vs Uruguay — Group H
+SUMMARY:🟢 Saudi Arabia 1-1 Uruguay — Group H
 LOCATION:Hard Rock Stadium\, Miami (Miami Gardens) (US)
 DESCRIPTION:Group H\nHard Rock Stadium, Miami (Miami Gardens)\nGiờ VN: 16
- /06 05:00\nFIFA World Cup 2026
+ /06 05:00\nKết quả: Saudi Arabia 1-1 (1-0) Uruguay\nFIFA World Cup 20
+ 26
 STATUS:CONFIRMED
 TRANSP:TRANSPARENT
 SEQUENCE:0
@@ -283,10 +287,10 @@ UID:wc2026-gG-iran-vs-newzealand@wc2026.nh0znoisung.github
 DTSTAMP:20251205T120000Z
 DTSTART:20260616T010000Z
 DTEND:20260616T030000Z
-SUMMARY:🟢 Iran vs New Zealand — Group G
+SUMMARY:🟢 Iran 2-2 New Zealand — Group G
 LOCATION:SoFi Stadium\, Los Angeles (Inglewood) (US)
 DESCRIPTION:Group G\nSoFi Stadium, Los Angeles (Inglewood)\nGiờ VN: 16/06
-  08:00\nFIFA World Cup 2026
+  08:00\nKết quả: Iran 2-2 (1-1) New Zealand\nFIFA World Cup 2026
 STATUS:CONFIRMED
 TRANSP:TRANSPARENT
 SEQUENCE:0
