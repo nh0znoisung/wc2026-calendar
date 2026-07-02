@@ -237,7 +237,10 @@ def upsert(svc, cal_id, fixture, live, favs, dry=False):
         "end": {"dateTime": (start + timedelta(hours=2)).strftime("%Y-%m-%dT%H:%M:%S"),
                 "timeZone": "Etc/UTC"},
         "colorId": color,
-        "reminders": {"useDefault": True},  # dùng default notification của lịch (set 30' trong UI)
+        # dùng default notification của lịch (set 30' trong UI). overrides:[] để
+        # XOÁ reminder cũ trên các event đã tạo trước đó (nếu không, PATCH sẽ gộp
+        # -> Google báo "cannot specify both default reminders and overrides").
+        "reminders": {"useDefault": True, "overrides": []},
     }
     if dry:
         print(f"[dry] {body['summary']}  | color {color} | {start:%Y-%m-%d %H:%MZ}")
