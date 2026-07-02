@@ -276,10 +276,15 @@ def main():
     if args.check_active:
         from datetime import datetime, timezone
         now = datetime.now(timezone.utc)
+        win = 150 * 60
         fixtures, _, _ = build_schedule(args.data_dir)
-        near = any(abs((fx["utc"] - now).total_seconds()) <= 150 * 60 for fx in fixtures)
-        print("active" if near else "idle")
-        sys.exit(0 if near else 1)
+        espn = fetch_espn()
+        live_now = any(e.get("state") == "in" for e in espn)              # đang đá (kể cả hoãn/kéo dài)
+        near_espn = any(abs((e["utc"] - now).total_seconds()) <= win for e in espn)   # giờ ESPN đã dời
+        near_sched = any(abs((fx["utc"] - now).total_seconds()) <= win for fx in fixtures)  # giờ lịch gốc
+        active = live_now or near_espn or near_sched
+        print(f"{'active' if active else 'idle'} (live_now={live_now}, near_espn={near_espn}, near_sched={near_sched})")
+        sys.exit(0 if active else 1)
 
     favs = {norm(t) for t in os.environ.get("FAVORITE_TEAMS", DEFAULT_FAVORITES).split(",")
             if t.strip()}
