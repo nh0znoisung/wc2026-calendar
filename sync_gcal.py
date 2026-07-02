@@ -66,7 +66,7 @@ NAME_ALIASES = {
     "turkiye": "turkey", "korearepublic": "southkorea", "irkiran": "iran",
     "iran": "iran", "cotedivoire": "ivorycoast", "caboverde": "capeverde",
     "czechia": "czechrepublic", "congodr": "drcongo", "usmnt": "usa",
-    "unitedstates": "usa",
+    "unitedstates": "usa", "bosniaandherzegovina": "bosniaherzegovina",
 }
 
 
@@ -74,6 +74,27 @@ def norm(name):
     s = unicodedata.normalize("NFKD", name).encode("ascii", "ignore").decode()
     s = re.sub(r"[^a-z0-9]+", "", s.lower())
     return NAME_ALIASES.get(s, s)
+
+
+# FIFA world ranking snapshot (11 Jun 2026, ESPN). Chỉnh tay khi có bản mới
+# (bản kế phát hành sau giải). Đội không có trong đây thì bỏ qua rank.
+FIFA_RANK_RAW = {
+    "Argentina": 1, "Spain": 2, "France": 3, "England": 4, "Portugal": 5, "Brazil": 6,
+    "Morocco": 7, "Netherlands": 8, "Belgium": 9, "Germany": 10, "Croatia": 11,
+    "Colombia": 13, "Mexico": 14, "Senegal": 15, "Uruguay": 16, "USA": 17, "Japan": 18,
+    "Switzerland": 19, "Iran": 20, "Turkey": 22, "Ecuador": 23, "Austria": 24,
+    "South Korea": 25, "Australia": 27, "Algeria": 28, "Egypt": 29, "Canada": 30,
+    "Norway": 31, "Ivory Coast": 33, "Panama": 34, "Sweden": 38, "Czech Republic": 40,
+    "Paraguay": 41, "Scotland": 42, "Tunisia": 45, "DR Congo": 46, "Uzbekistan": 50,
+    "Qatar": 56, "Iraq": 57, "South Africa": 60, "Saudi Arabia": 61, "Jordan": 63,
+    "Bosnia & Herzegovina": 64, "Cape Verde": 67, "Ghana": 73, "Curaçao": 82,
+    "Haiti": 83, "New Zealand": 85,
+}
+FIFA_RANK = {norm(k): v for k, v in FIFA_RANK_RAW.items()}
+
+
+def rank_of(name):
+    return FIFA_RANK.get(norm(name))
 
 
 def event_id(fixture):
@@ -109,11 +130,17 @@ def fetch_espn():
             for c in comp.get("competitors", []):
                 nm = c["team"].get("displayName") or c["team"].get("name", "")
                 sc = c.get("score")
-                order.append((nm, int(sc) if (sc not in (None, "")) else None,
-                              c.get("homeAway")))
+                so = c.get("shootoutScore")   # tỷ số luân lưu (nếu có)
+                order.append({
+                    "name": nm,
+                    "score": int(sc) if str(sc) not in ("None", "") else None,
+                    "so": int(so) if str(so) not in ("None", "") else None,
+                    "form": c.get("form"),                                   # 5 trận gần nhất, vd "WLWWW"
+                    "record": (c.get("records") or [{}])[0].get("summary"),  # W-D-L, vd "3-1-0"
+                })
             out.append({
                 "utc": utc, "venue": venue,
-                "teams": {norm(n) for n, _, _ in order},
+                "teams": {norm(c["name"]) for c in order},
                 "order": order,
                 "state": st.get("state", "pre"),     # pre / in / post
                 "clock": comp.get("status", {}).get("displayClock", ""),
@@ -171,6 +198,18 @@ def match_espn(fixture, espn, name_to_city):
     return min(cands, key=lambda e: abs((e["utc"] - fixture["utc"]).total_seconds()))
 
 
+def _result_tail(order, live):
+    """' (pen 3-4)' nếu đá luân lưu, ' (aet)' nếu chỉ hiệp phụ, else ''."""
+    h_so, a_so = order[0].get("so"), order[1].get("so")
+    if h_so is not None and a_so is not None:
+        return f" (pen {h_so}-{a_so})"
+    clk = live.get("clock") or ""
+    det = (live.get("detail") or "").lower()
+    if "120" in clk or "aet" in det or "extra" in det or "-et" in det:
+        return " (aet)"
+    return ""
+
+
 def render(fixture, live):
     """Return (summary, description).  Status icon: ⚪ sắp đá · 🔴 đang đá · ✅ đã đá."""
     stage = fixture["stage"]
@@ -186,26 +225,40 @@ def render(fixture, live):
     home, away = fixture["home"], fixture["away"]
     score_line = ""
 
+    o = live["order"] if live else None
     live_scored = (live and live["state"] in ("in", "post")
-                   and len([1 for _, s, _ in live["order"] if s is not None]) == 2)
+                   and o and len(o) == 2 and all(c["score"] is not None for c in o))
     if live_scored:
-        home, away = live["order"][0][0], live["order"][1][0]
-        h_s, a_s = live["order"][0][1], live["order"][1][1]
+        home, away = o[0]["name"], o[1]["name"]
+        h_s, a_s = o[0]["score"], o[1]["score"]
         if live["state"] == "in":
             clk = live["clock"] or live["detail"] or "live"
             summary = f"🔴 {prefix}{home} {h_s}-{a_s} {away} ({clk}){suffix}"
             score_line = f"\\nĐang đá: {home} {h_s}-{a_s} {away} — {clk}"
         else:
-            tag = f" ({live['detail']})" if live.get("detail") and "FT" not in live["detail"].upper() else ""
-            summary = f"✅ {prefix}{home} {h_s}-{a_s} {away}{suffix}"
-            score_line = f"\\nKết quả: {home} {h_s}-{a_s} {away}{tag}"
+            tail = _result_tail(o, live)   # ' (pen 3-4)' / ' (aet)' / ''
+            summary = f"✅ {prefix}{home} {h_s}-{a_s} {away}{tail}{suffix}"
+            score_line = f"\\nKết quả: {home} {h_s}-{a_s} {away}{tail}"
     elif fixture.get("score"):
-        summary = f"✅ {prefix}{home} {fixture['score'].split(' ')[0]} {away}{suffix}"
+        summary = f"✅ {prefix}{home} {fixture['score']} {away}{suffix}"
         score_line = f"\\nKết quả: {home} {fixture['score_full']} {away}"
     else:
         summary = f"⚪ {prefix}{home} vs {away}{suffix}"
 
-    desc = f"{head}\\n{venue}\\nGiờ VN: {g.vn_str(fixture['utc'])}{score_line}\\nFIFA World Cup 2026"
+    # FIFA ranking (snapshot) + phong độ/record (ESPN, optional)
+    def _rk(nm):
+        r = rank_of(nm)
+        return f"{nm} (#{r})" if r else nm
+    rank_line = (f"\\nFIFA: {_rk(home)} · {_rk(away)}"
+                 if (rank_of(home) or rank_of(away)) else "")
+    form_line = ""
+    if o and len(o) == 2 and (o[0].get("form") or o[0].get("record")):
+        def _fr(c):
+            return ((c.get("form") or "") + (f" ({c['record']})" if c.get("record") else "")).strip() or "-"
+        form_line = f"\\nPhong độ: {o[0]['name']} {_fr(o[0])} · {o[1]['name']} {_fr(o[1])}"
+
+    desc = (f"{head}\\n{venue}\\nGiờ VN: {g.vn_str(fixture['utc'])}"
+            f"{score_line}{rank_line}{form_line}\\nFIFA World Cup 2026")
     return summary, desc, home, away
 
 

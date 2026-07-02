@@ -78,6 +78,12 @@ No secret required — set either:
 
 Default: `Portugal, Argentina, France`.
 
+### FIFA ranking & form
+Each event's description shows both teams' FIFA rank (e.g. `Germany (#10)`) and, when
+ESPN has it, recent form + W-D-L record (`WWDWL (2-1-0)`). The ranking is a static
+snapshot (`FIFA_RANK_RAW` in `sync_gcal.py`, from the 11 Jun 2026 release) — edit it when
+FIFA publishes the post-tournament update.
+
 ### Reminder (important)
 Per-event reminders set via the API apply to the service account, **not** to your
 devices, because reminders in Google are per-user and this is a shared calendar. To get
