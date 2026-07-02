@@ -99,10 +99,15 @@ Within that limit the ramp goes "deeper round = hotter", skipping harsh blue/yel
 
 Edit `STAGE_COLOR` in `sync_gcal.py` to change it.
 
-### Schedule
-`*/5 * * * *` (UTC) in `.github/workflows/update.yml` — GitHub's minimum interval.
-Runs are occasionally delayed by GitHub under load; the script only patches events that
-actually changed.
+### Schedule / update cadence
+GitHub's scheduled cron is best-effort (often delayed 15+ min), so a plain `*/5` cron
+does **not** give a real 5-minute cadence. Instead the workflow **self-loops**: one run
+syncs every 5 minutes for ~1 hour, then re-dispatches itself — but only while a match
+kicks off within ±150 min (`--check-active`). Outside match windows it exits immediately
+to save runner minutes. A `*/15` watchdog cron restarts the loop if it ever dies.
+
+Requires the repo to be **public** (unlimited free Actions minutes) and
+`permissions: actions: write` (already set) so the run can re-trigger itself.
 
 ---
 

@@ -269,7 +269,17 @@ def main():
     ap.add_argument("--data-dir", required=True)
     ap.add_argument("--dry-run", action="store_true",
                     help="don't touch Google; just print what would be written")
+    ap.add_argument("--check-active", action="store_true",
+                    help="exit 0 if a match kicks off within ±150 min, else exit 1")
     args = ap.parse_args()
+
+    if args.check_active:
+        from datetime import datetime, timezone
+        now = datetime.now(timezone.utc)
+        fixtures, _, _ = build_schedule(args.data_dir)
+        near = any(abs((fx["utc"] - now).total_seconds()) <= 150 * 60 for fx in fixtures)
+        print("active" if near else "idle")
+        sys.exit(0 if near else 1)
 
     favs = {norm(t) for t in os.environ.get("FAVORITE_TEAMS", DEFAULT_FAVORITES).split(",")
             if t.strip()}

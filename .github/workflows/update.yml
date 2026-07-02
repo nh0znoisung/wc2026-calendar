@@ -2,19 +2,21 @@ name: Sync World Cup 2026 to Google Calendar
 
 on:
   schedule:
-    # Mỗi 5 phút (mức nhỏ nhất GitHub cho phép). GitHub cron có thể trễ vài phút
-    # khi hệ thống bận — bình thường.
-    - cron: "*/5 * * * *"
-  workflow_dispatch: {}   # cho phép bấm chạy tay trong tab Actions
+    # Watchdog. GitHub scheduled crons are best-effort (often delayed 15+ min),
+    # so this only (re)starts the self-loop below; the real 5-min cadence comes
+    # from the loop, not from this cron.
+    - cron: "*/15 * * * *"
+  workflow_dispatch: {}
   push:
-    branches: [main]       # chạy lại mỗi khi sửa code
+    branches: [main]
 
 permissions:
   contents: read
+  actions: write      # để tự kích hoạt lại (giữ vòng lặp 5 phút sống)
 
 concurrency:
   group: sync-gcal
-  cancel-in-progress: false
+  cancel-in-progress: true   # luôn chỉ có 1 vòng lặp chạy
 
 jobs:
   sync:
@@ -22,28 +24,44 @@ jobs:
     env:
       GCAL_ID: ${{ secrets.GCAL_ID }}
       GOOGLE_SA_KEY: ${{ secrets.GOOGLE_SA_KEY }}
-      FAVORITE_TEAMS: ${{ vars.FAVORITE_TEAMS }}   # repo Variable (không phải secret); trống thì dùng mặc định
+      FAVORITE_TEAMS: ${{ vars.FAVORITE_TEAMS }}
+      GH_TOKEN: ${{ github.token }}
     steps:
-      - name: Checkout repo
-        uses: actions/checkout@v4
-
-      - name: Setup Python
-        uses: actions/setup-python@v5
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
-
       - name: Install deps
         run: pip install requests google-api-python-client google-auth
-
       - name: Fetch fixtures data (openfootball)
         run: git clone --depth 1 https://github.com/openfootball/worldcup.git _data
 
-      - name: Sync to Google Calendar
+      - name: Warn if secrets missing
+        if: ${{ env.GCAL_ID == '' || env.GOOGLE_SA_KEY == '' }}
+        run: echo "::warning::GCAL_ID / GOOGLE_SA_KEY chưa cấu hình — bỏ qua sync. Xem README (Setup)."
+
+      # Sync ngay 1 lần. Nếu đang gần giờ trận (±150') thì lặp mỗi 5 phút trong
+      # ~1 tiếng; ngoài giờ trận thì thoát luôn cho đỡ tốn runner.
+      - name: Sync loop (5-min cadence during match windows)
         if: ${{ env.GCAL_ID != '' && env.GOOGLE_SA_KEY != '' }}
         run: |
           DATA=$(echo _data/2026--*)
-          python sync_gcal.py --data-dir "$DATA"
+          for i in $(seq 1 12); do
+            python sync_gcal.py --data-dir "$DATA" || true
+            if ! python sync_gcal.py --data-dir "$DATA" --check-active; then
+              echo "Không có trận nào gần giờ — thoát vòng lặp."
+              exit 0
+            fi
+            echo "Đang trong khung giờ trận — chờ 5 phút (lần $i/12)."
+            sleep 300
+          done
 
-      - name: Warn if secrets missing
-        if: ${{ env.GCAL_ID == '' || env.GOOGLE_SA_KEY == '' }}
-        run: echo "::warning::GCAL_ID / GOOGLE_SA_KEY chưa cấu hình — bỏ qua sync. Xem README mục Mode B."
+      # Sau ~1 tiếng: nếu vẫn còn trong khung giờ trận, tự kích hoạt lại để tiếp tục.
+      - name: Keep the loop alive
+        if: ${{ env.GCAL_ID != '' && env.GOOGLE_SA_KEY != '' }}
+        run: |
+          DATA=$(echo _data/2026--*)
+          if python sync_gcal.py --data-dir "$DATA" --check-active; then
+            echo "Vẫn còn trận gần giờ — tái kích hoạt workflow."
+            gh workflow run "${GITHUB_WORKFLOW}" --ref main || true
+          fi
