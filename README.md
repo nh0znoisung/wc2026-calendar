@@ -14,6 +14,7 @@ Features:
 - **Status icon:** ⚪ upcoming · 🔴 live · ✅ finished.
 - **Per-round colors** (deeper round = hotter), plus **favorite teams highlighted red**.
 - **30-minute reminder** before every match (configurable).
+- **Auto-reschedule:** kickoff follows ESPN, so weather delays move the event automatically.
 - Times stored in UTC → Google shows each match in **your local time zone**.
 
 ---
@@ -77,8 +78,13 @@ No secret required — set either:
 
 Default: `Portugal, Argentina, France`.
 
-### Reminder
-`REMINDER_MIN` in `sync_gcal.py` — popup minutes before kickoff. Default **30**.
+### Reminder (important)
+Per-event reminders set via the API apply to the service account, **not** to your
+devices, because reminders in Google are per-user and this is a shared calendar. To get
+a phone notification, set a **default notification on the calendar itself** (once):
+Google Calendar → hover *World Cup 2026 LIVE* → ⋮ → **Settings and sharing** →
+**Event notifications** → **Add notification** → e.g. `30 minutes`. It applies to all
+events and syncs to the mobile app (with sync + OS notifications enabled).
 
 ### Round colors
 Google's API exposes only **11 preset event colors** (custom hex is UI-only, calendar-level).

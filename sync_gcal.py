@@ -57,8 +57,10 @@ FAV_COLOR = "11"          # Tomato   - đội yêu thích luôn đỏ (đè màu
 # Secrets and variables -> Actions -> tab Variables), vd: "Portugal, Argentina, France".
 DEFAULT_FAVORITES = "Portugal, Argentina, France"
 
-# Nhắc trước trận bao nhiêu phút (popup). Đổi số này nếu muốn.
-REMINDER_MIN = 30
+# Nhắc nhở: reminder set qua API chỉ áp cho service account, KHÔNG sync tới thiết
+# bị của chủ lịch khi lịch được share. Nên để event dùng "default notifications"
+# của lịch — bạn set 30 phút một lần trong Google Calendar UI
+# (Settings and sharing -> Event notifications). Đó là cách duy nhất noti tới điện thoại.
 
 NAME_ALIASES = {
     "turkiye": "turkey", "korearepublic": "southkorea", "irkiran": "iran",
@@ -135,21 +137,38 @@ def build_schedule(data_dir):
     return fixtures, stadiums, name_to_city
 
 
+def _venue_city(espn_venue, name_to_city):
+    """ESPN venue fullName -> openfootball city label (fuzzy: sponsor names differ)."""
+    if not espn_venue:
+        return None
+    if espn_venue in name_to_city:
+        return name_to_city[espn_venue]
+    for name, city in name_to_city.items():
+        if name and (name in espn_venue or espn_venue in name):
+            return city
+    return None
+
+
 def match_espn(fixture, espn, name_to_city):
+    fteams = {norm(fixture["home"]), norm(fixture["away"])}
+    # (a) robust: a team plays at most once/day, so "shares >=1 team within ±12h"
+    #     is unique — and survives kickoff reschedules (weather) + opponent
+    #     spelling differences. Works once teams are known (group + resolved KO).
+    same = [e for e in espn if (e["teams"] & fteams)
+            and abs((e["utc"] - fixture["utc"]).total_seconds()) <= 12 * 3600]
+    if same:
+        return min(same, key=lambda e: abs((e["utc"] - fixture["utc"]).total_seconds()))
+    # (b) unresolved knockout placeholders: match by kickoff window + venue
     cands = [e for e in espn
              if abs((e["utc"] - fixture["utc"]).total_seconds()) <= 90 * 60]
     if not cands:
         return None
     if len(cands) == 1:
         return cands[0]
-    # disambiguate by venue (ESPN venue name -> city == fixture venue label)
     for e in cands:
-        if name_to_city.get(e["venue"]) == fixture["venue"]:
+        if _venue_city(e["venue"], name_to_city) == fixture["venue"]:
             return e
-    # then by team-name overlap
-    fteams = {norm(fixture["home"]), norm(fixture["away"])}
-    best = max(cands, key=lambda e: len(e["teams"] & fteams))
-    return best if (best["teams"] & fteams) else None
+    return min(cands, key=lambda e: abs((e["utc"] - fixture["utc"]).total_seconds()))
 
 
 def render(fixture, live):
@@ -218,8 +237,7 @@ def upsert(svc, cal_id, fixture, live, favs, dry=False):
         "end": {"dateTime": (start + timedelta(hours=2)).strftime("%Y-%m-%dT%H:%M:%S"),
                 "timeZone": "Etc/UTC"},
         "colorId": color,
-        "reminders": {"useDefault": False,
-                      "overrides": [{"method": "popup", "minutes": REMINDER_MIN}]},
+        "reminders": {"useDefault": True},  # dùng default notification của lịch (set 30' trong UI)
     }
     if dry:
         print(f"[dry] {body['summary']}  | color {color} | {start:%Y-%m-%d %H:%MZ}")
@@ -261,6 +279,8 @@ def main():
     stats = {}
     for fx in fixtures:
         live = match_espn(fx, espn, name_to_city)
+        if live and live.get("utc"):
+            fx["utc"] = live["utc"]   # follow ESPN kickoff → auto-reschedule on weather delays
         res = upsert(svc, cal_id, fx, live, favs, dry=args.dry_run)
         stats[res] = stats.get(res, 0) + 1
     print("done:", stats)
