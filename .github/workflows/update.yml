@@ -25,6 +25,7 @@ jobs:
       GCAL_ID: ${{ secrets.GCAL_ID }}
       GOOGLE_SA_KEY: ${{ secrets.GOOGLE_SA_KEY }}
       FAVORITE_TEAMS: ${{ vars.FAVORITE_TEAMS }}
+      NTFY_TOPIC: ${{ vars.NTFY_TOPIC }}          # đặt để nhận push khi có kết quả đổi
       GH_TOKEN: ${{ github.token }}
     steps:
       - uses: actions/checkout@v4

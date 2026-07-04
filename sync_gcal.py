@@ -272,7 +272,35 @@ def gcal_service():
     return build("calendar", "v3", credentials=creds, cache_discovery=False)
 
 
-def upsert(svc, cal_id, fixture, live, favs, dry=False):
+def _duration_min(fixture, live):
+    """Độ dài khối: đang đá 165' (đệm hiệp phụ), luân lưu 180', hiệp phụ 165', thường 120'."""
+    if live and live.get("state") == "in":
+        return 165
+    tail = _result_tail(live["order"], live) if (live and live.get("order")) else ""
+    txt = (tail + " " + (fixture.get("score_full") or "")).lower()
+    if "pen" in txt:
+        return 180
+    if "aet" in txt or "a.e.t" in txt:
+        return 165
+    return 120
+
+
+def send_ntfy(messages, title):
+    """Bắn push qua ntfy.sh khi có kết quả đổi (cần đặt biến NTFY_TOPIC)."""
+    topic = os.environ.get("NTFY_TOPIC")
+    if not topic or not messages:
+        return
+    import requests
+    try:
+        requests.post(f"https://ntfy.sh/{topic}",
+                      data="\n".join(messages[:20]).encode("utf-8"),
+                      headers={"Title": title, "Tags": "soccer"}, timeout=15)
+        print(f"ntfy: sent {len(messages)} update(s)")
+    except Exception as e:  # noqa
+        print(f"WARN: ntfy failed ({e})")
+
+
+def upsert(svc, cal_id, fixture, live, favs, dry=False, notify=None):
     summary, desc, home, away = render(fixture, live)
     if norm(home) in favs or norm(away) in favs:
         color = FAV_COLOR
@@ -281,18 +309,15 @@ def upsert(svc, cal_id, fixture, live, favs, dry=False):
     else:
         color = STAGE_COLOR[fixture["stage"]]
     start = fixture["utc"]
+    end = start + timedelta(minutes=_duration_min(fixture, live))
     body = {
         "id": event_id(fixture),
         "summary": summary,
         "location": fixture.get("venue_disp") or fixture["venue"],
         "description": desc.replace("\\n", "\n"),
         "start": {"dateTime": start.strftime("%Y-%m-%dT%H:%M:%S"), "timeZone": "Etc/UTC"},
-        "end": {"dateTime": (start + timedelta(hours=2)).strftime("%Y-%m-%dT%H:%M:%S"),
-                "timeZone": "Etc/UTC"},
+        "end": {"dateTime": end.strftime("%Y-%m-%dT%H:%M:%S"), "timeZone": "Etc/UTC"},
         "colorId": color,
-        # dùng default notification của lịch (set 30' trong UI). overrides:[] để
-        # XOÁ reminder cũ trên các event đã tạo trước đó (nếu không, PATCH sẽ gộp
-        # -> Google báo "cannot specify both default reminders and overrides").
         "reminders": {"useDefault": True, "overrides": []},
     }
     if dry:
@@ -301,20 +326,25 @@ def upsert(svc, cal_id, fixture, live, favs, dry=False):
     from googleapiclient.errors import HttpError
     try:
         existing = svc.events().get(calendarId=cal_id, eventId=body["id"]).execute()
-        changed = (existing.get("summary") != body["summary"]
-                   or existing.get("colorId") != body["colorId"]
-                   or existing.get("description") != body["description"])
-        if existing.get("status") == "cancelled":
-            svc.events().insert(calendarId=cal_id, body=body).execute(); return "reinsert"
-        if changed:
-            svc.events().patch(calendarId=cal_id, eventId=body["id"], body=body).execute()
-            return "update"
-        return "nochange"
     except HttpError as e:
-        if e.resp.status == 404:
-            svc.events().insert(calendarId=cal_id, body=body).execute()
-            return "insert"
-        raise
+        if e.resp.status != 404:
+            raise
+        svc.events().insert(calendarId=cal_id, body=body).execute()
+        return "insert"
+    body["status"] = "confirmed"     # hồi sinh nếu event từng bị xoá (cancelled) -> patch, tránh 409
+    changed = existing.get("status") == "cancelled" \
+        or existing.get("summary") != body["summary"] \
+        or existing.get("colorId") != body["colorId"] \
+        or existing.get("description") != body["description"] \
+        or existing.get("start", {}).get("dateTime", "")[:16] != body["start"]["dateTime"][:16] \
+        or existing.get("end", {}).get("dateTime", "")[:16] != body["end"]["dateTime"][:16]
+    if changed:
+        if (notify is not None and existing.get("status") != "cancelled"
+                and existing.get("summary") and existing.get("summary") != body["summary"]):
+            notify.append(body["summary"])          # tiêu đề đổi (bàn thắng/kết thúc) -> báo
+        svc.events().patch(calendarId=cal_id, eventId=body["id"], body=body).execute()
+        return "update"
+    return "nochange"
 
 
 def main():
@@ -346,14 +376,16 @@ def main():
     print(f"schedule fixtures: {len(fixtures)} | ESPN events: {len(espn)} | favorites: {sorted(favs)}")
 
     svc = None if args.dry_run else gcal_service()
-    cal_id = os.environ.get("GCAL_ID", "DRY")
-    stats = {}
+    cal_id = (os.environ.get("GCAL_ID") or "DRY").strip()
+    stats, notify = {}, []
     for fx in fixtures:
         live = match_espn(fx, espn, name_to_city)
         if live and live.get("utc"):
             fx["utc"] = live["utc"]   # follow ESPN kickoff → auto-reschedule on weather delays
-        res = upsert(svc, cal_id, fx, live, favs, dry=args.dry_run)
+        res = upsert(svc, cal_id, fx, live, favs, dry=args.dry_run, notify=notify)
         stats[res] = stats.get(res, 0) + 1
+    if not args.dry_run:
+        send_ntfy(notify, "⚽ World Cup 2026 — kết quả cập nhật")
     print("done:", stats)
 
 
